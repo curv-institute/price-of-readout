@@ -1,0 +1,10 @@
+{
+  "selftest_5_1_PASS": true,
+  "C_B5_violated": false,
+  "G-B1": "PASS",
+  "G-B2": "PASS",
+  "G-B3": "PASS",
+  "G-B4": "PASS",
+  "masking_at_scale_reproduced": true,
+  "PQ2_cv": 1.2666092023942654
+}

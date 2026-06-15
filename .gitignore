@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+# LaTeX build artifacts (main.pdf is committed)
+*.aux
+*.log
+*.out
+*.synctex.gz

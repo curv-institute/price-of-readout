@@ -1,0 +1,126 @@
+PRICE OF READOUT — combined evidence manifest
+=============================================
+Date: 2026-06-15 (UTC)
+Paper: "The Price of Readout: Exact Interface Floors and Frozen-Readout
+Shift Evaluation" (J.W. Miller, CURV Institute).
+Repository: https://github.com/curv-institute/price-of-readout
+Tag: v1.0-submission
+
+Purpose. This manifest is the single, paper-specific evidence anchor for
+the public reproduction repository. It pins (1) the pre-registration,
+amendment, and results commit hashes of all three experiments, in the
+repositories where those commits live, and (2) the SHA-256 digest of
+every file as it sits in THIS repository. The manifest itself is
+externally timestamped via OpenTimestamps (file
+PRICE_OF_READOUT_EVIDENCE.txt.ots beside it): only this file's SHA-256
+digest leaves the machine, anchored in the Bitcoin blockchain via public
+calendar servers. Verify with
+  ots verify PRICE_OF_READOUT_EVIDENCE.txt.ots
+against this file (run `ots upgrade` first to pull the on-chain proof).
+
+This anchor SUPPLEMENTS, and does not replace, the two pre-existing
+attestations reproduced verbatim in evidence/: the Experiment 1 & 2
+manifest (EVIDENCE_MANIFEST_exp1_exp2.txt.ots, dated 2026-06-10,
+Bitcoin-confirmed) and the Experiment 3 manifest
+(EXPERIMENT_EVIDENCE_MANIFEST_exp3.txt.ots, dated 2026-06-11/12). Those
+attestations, predating this repository, are the before-any-run evidence;
+the git dates in this repository are NOT (see evidence/PROVENANCE.md).
+
+Evidence commits (before-any-run ordering)
+-------------------------------------------
+Experiment 1 — Gaussian lawful compression
+  (evidence archive curv-institute/por-reproduction, dir track3_gate2;
+   internal label "track 3 / gate 2"):
+    pre-registration commit: 3b05461418dc562212588562acb0aa9a18191c1b
+    results commit:          341851624b3b0049d2f116524b7403a9fca5bb6d
+  (development monorepo equivalents: prereg fd72496, results 976d13d)
+
+Experiment 2 — readout ladder
+  (evidence archive curv-institute/por-reproduction, dir track4_gateB;
+   internal label "track 4 / experiment B"):
+    pre-registration commit: 6a3645ebc81b04b25b726276e95469b3afc8d8d6
+    results commit:          1dca8225c7e4a6553b58b6b53d7e691eec639ec4
+  (development monorepo equivalents: prereg 13377dd, results 0e49c08)
+
+Experiment 3 — CIFAR-10 masking at scale
+  (development monorepo curv-wiki, dir expB_masking_real;
+   campaign label "Experiment B"):
+    pre-registration commit:        d26850e3a86ce1b02aa1f5d1f474489369f5d669
+    pre-unblinding amendment commit: dc7b1fd4d2d5c14aa0aa4c558a49f5f1122e58f6
+    analysis+training script commit: c13792a
+    results commit:                 23a90152676e6c98b2a179a6d7e2ed9904c2e714
+    raw-artifact commit:            478df16883aca05dea0bf5b28f852494f0f66c67
+
+The Experiment 1 & 2 hashes are exactly those pinned by
+EVIDENCE_MANIFEST_exp1_exp2.txt (Bitcoin-confirmed, 2026-06-10). The
+Experiment 3 hashes are exactly those pinned by
+EXPERIMENT_EVIDENCE_MANIFEST_exp3.txt (2026-06-11/12). Commit hashes are
+content addresses over tree, parents, and dates.
+
+Pinned-file digests (cross-checked against the prior attestations)
+------------------------------------------------------------------
+sha256(theory_verification/verify_xor_min_e.py) =
+  aa9f4eed57e7ccd7acc7936fc2c7dce06063ea32fee1795843ac3e4d012fd165
+sha256(experiments/experiment1_gaussian/PREREGISTRATION.md) =
+  a493e875c781e3e3f9fb02574c6517444d105f1df242968c1e1b23dd550826bc
+sha256(experiments/experiment2_ladder/PREREGISTRATION.md) =
+  0950877b95efcefbd2910b2b61cb817b3983a7078264c8936781d86ce63526a5
+sha256(theory_verification/superposition_min_e.py) =
+  c8de5f8c4eb3c9573086c14682a0b094256c7c7f2a2f555624467cba7b89b61a
+sha256(experiments/experiment3_cifar/spurious_cifar.py) =
+  ab8f6e61d54be4ea13b23aee326aabccb2f272c4bfffa4431ace45b70c9050ba
+sha256(lib/fourq.py) =
+  8b66bc7d07c2f0d1cc11180a5c629b156c014c413cb1b5644a6e1539abdd255a
+
+SHA-256 of every file in this repository (at manifest creation)
+---------------------------------------------------------------
+89665a1394ae8d98f48aaf830542686020580320ac1121a31d68111c7080a499  evidence/EVIDENCE_MANIFEST_exp1_exp2.txt
+af71c829fb1079c8f2139a8cf76b5f60a6ae66dc52674dbae27290323ab9faae  evidence/EVIDENCE_MANIFEST_exp1_exp2.txt.ots
+33c268a6538b391a2a871bfe5fd12863754eaa18a7b058f22a75b0a2f62249cf  evidence/EXPERIMENT_EVIDENCE_MANIFEST_exp3.pre-results.txt.ots
+1a777296c5481da17fd7dc49120e9352066f4a5187636971becd4bc05e905df4  evidence/EXPERIMENT_EVIDENCE_MANIFEST_exp3.txt
+86b312aa0e9b7ecc2c209eb932223b30493f8b928d21d672b22e65328b7da4b7  evidence/EXPERIMENT_EVIDENCE_MANIFEST_exp3.txt.ots
+53ebb23bd287c01fe16d8d6ea8753b2c3ed7b55c89665abad86c5571d418ca27  evidence/lcr.bundle.ots
+5ca661fe1e0e4d2faf5e6e652d75b2a174fb32e907098eae06d698ba35c006a8  evidence/PROVENANCE.md
+0f029cb31e9d095858819e910c67e15304b44778af48024067079274b79ebd8a  experiments/experiment1_gaussian/analytic_predictions.json
+c336467b98416ca6a929e460ae372cbeeb82c02767c253c1f0b4e5670601790c  experiments/experiment1_gaussian/lawful_compression_experiment.py
+a493e875c781e3e3f9fb02574c6517444d105f1df242968c1e1b23dd550826bc  experiments/experiment1_gaussian/PREREGISTRATION.md
+a5125e0a43d3f5c66baaf5e1bfea6c2f221aeebcf3b0884553a6b7d6957f6169  experiments/experiment1_gaussian/README.md
+f629f16c62dd9452c5eaa29456cfb4268e6f777e6e946edb59903901a8301894  experiments/experiment1_gaussian/results.csv
+d6cb4a991e9bed7338f92693ce0b02fb50872ebc043d6af43ff8ee45a026c5c8  experiments/experiment1_gaussian/RESULTS.md
+2080a0a3a98d8685f24a64b35666e166015fedd5a8371fa7d025920dbfb8b03f  experiments/experiment1_gaussian/results_summary.json
+c52840e61a853bf9151d8c5fec738fed0a432b4e879d3ced9733431db5c6d2d8  experiments/experiment2_ladder/analytic_predictions.json
+0950877b95efcefbd2910b2b61cb817b3983a7078264c8936781d86ce63526a5  experiments/experiment2_ladder/PREREGISTRATION.md
+d17fe30792b6e9db5c1aefd5fd7a40c30933d991a81b9cf44b206453f306f6e2  experiments/experiment2_ladder/README.md
+a67b2cb9d06ad2c234a00962e58e59b21918e9f54328c8ef2046d3e2e5b572ad  experiments/experiment2_ladder/readout_geometry_experiment.py
+e6a7d6f23d4163b795184a41fc2f8ec637bfae43947b8b19d782422913a6f90c  experiments/experiment2_ladder/results.csv
+e406d46c9b3ca0afe12c156c1a38b58c7fd443829a2a5af101bc18726e6eb315  experiments/experiment2_ladder/RESULTS.md
+2399e9f9d13f58ebd5ca9211e1b0f6512a0479057ba667e77c692476f42ed21f  experiments/experiment2_ladder/results_summary.json
+c4f0726c9c69740a1f3f7a19f784bc835ecc3b1a5cea84cb26d39cead12c0bc8  experiments/experiment3_cifar/analyze_masking.py
+418625b0dc50ccfb1dde4a93ec940c6cca7b845c4bd8cae50a1c40f349a528d8  experiments/experiment3_cifar/machine_summary.json
+14e367cb2c7818e9025b3107002aed88b2d22dcd46f0a3d9bf13a1eb2b16e101  experiments/experiment3_cifar/PREREGISTRATION.md
+9261bfe75360a70b32836de3e10133e8342b93651d13ad0186e68c38c606e53f  experiments/experiment3_cifar/PRERUN_NOTE_2026-06-11.md
+3aa0b2436a99e7a6bc978b7f909dddc09ef10221b61a8650cf8b004454e5b153  experiments/experiment3_cifar/README.md
+28627ac966ebb9306b3d501b11a2a7a2ab8b16f6546331488f280a06a420c633  experiments/experiment3_cifar/results.csv
+fb7eff702b0205fb3114bc800e71bbf465a3f7b405f7f6a3ce649e9d4154733e  experiments/experiment3_cifar/RESULTS.md
+53d857588bc8dfd04f01f08beaaed7bfaeda4a220cc01bd239668bab1f41f361  experiments/experiment3_cifar/results_rows.json
+1d80f6f8b492df1ef7f92d3a08e4c1f5d50385e0c1218fa08a7529880f8282e4  experiments/experiment3_cifar/results_summary.json
+b6333e6dd9508b836f59a66fd3f52fbe34a968f47a762777fcfe5c9de3d7913b  experiments/experiment3_cifar/run_batch.sh
+ab8f6e61d54be4ea13b23aee326aabccb2f272c4bfffa4431ace45b70c9050ba  experiments/experiment3_cifar/spurious_cifar.py
+b911c4e1f1bcc571091eebe9919d593730c78213695943d6b6ca037779fc60c5  experiments/experiment3_cifar/train_run.py
+f8739c37ca2b1268e09cfef1363cafd4caa98aa676301460eb4850445e01f41d  .gitignore
+8b66bc7d07c2f0d1cc11180a5c629b156c014c413cb1b5644a6e1539abdd255a  lib/fourq.py
+83e33eca4678f8240721ae3303be2ed8d9aa834c9e93c1f1a848d37efdb81399  lib/README.md
+7ac9493747bf3c96e8dac4e4e8cadacc57f205c91bf13948ea219306263f42f3  lib/test_fourq.py
+53ae5cb20cc7de50141cfdc5dc06038130f64315f0545a3cc212cb0203e3f554  LICENSE
+8d1c169972107333589c732dfb0ed5fbd2a55f56a29a8349325e97ca5cad8a71  paper/figures/fig_exp1_shift.pdf
+c99cd92055d9460adb2fd10da3bc5686a931eb70f9b257c22c3ec03083fb6f56  paper/figures/fig_exp2_ladder.pdf
+bb7767268318b6bc310c33baaa8699652ebbb5139a18ffe61d401c1d14fbf9fd  paper/figures/fig_exp3_cannibal.pdf
+354a2fe8329c0c1c4569b40eaffe1fa18590ad8ca6d4eede7854e8d4297b7080  paper/figures/fig_exp3_masking.pdf
+249eff5635b016a3f87e9569c9c1a637da15a5598f99188a422fa7191ce9cec1  paper/figures/fig_exp3_stimuli.pdf
+52cd253aab4d564931fa5393328dab1681a8c5076cc1883bd580ffe49fccf32a  paper/figures/make_figures.py
+db518c6abfd2677c3b1e401810cac293dff76781d86156cc8710f72cf3cac8b5  paper/main.pdf
+60e943e88621a78649ee3b7bd38385c7c0e3cf9bfb111d56dc1eee6b624be800  paper/main.tex
+55d7393023371cbf98a36299dafe568841e3f9509be9edb53d133b5862f51160  README.md
+30510f76b2afff0e8b07ec63b6e3be1497a1bf833e3798c2bc3f9dae1bb36fa2  theory_verification/README.md
+c8de5f8c4eb3c9573086c14682a0b094256c7c7f2a2f555624467cba7b89b61a  theory_verification/superposition_min_e.py
+aa9f4eed57e7ccd7acc7936fc2c7dce06063ea32fee1795843ac3e4d012fd165  theory_verification/verify_xor_min_e.py

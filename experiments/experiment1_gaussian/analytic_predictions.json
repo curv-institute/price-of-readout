@@ -1,0 +1,34 @@
+{
+  "H_Y_given_S_bits": 0.6665379173904149,
+  "per_dn": {
+    "8": {
+      "v_mu": 0.9715142428785608,
+      "H_Y_given_N_bits": 0.6788510158677903,
+      "H_A_logistic_Y_given_N_bits": 0.6788533820561417,
+      "c_star": 1.9583962306485305,
+      "CE_shift_unlawful_bits": 2.341445815195767,
+      "predicted_shift_increase_bits": 1.6625924331396256
+    },
+    "64": {
+      "v_mu": 0.9963482606188737,
+      "H_Y_given_N_bits": 0.6681312233822467,
+      "H_A_logistic_Y_given_N_bits": 0.6681312684839193,
+      "c_star": 1.9945357790898077,
+      "CE_shift_unlawful_bits": 2.404688342514559,
+      "predicted_shift_increase_bits": 1.7365570740306397
+    },
+    "256": {
+      "v_mu": 0.9990845579378463,
+      "H_Y_given_N_bits": 0.6669377559204324,
+      "H_A_logistic_Y_given_N_bits": 0.6669377588018607,
+      "c_star": 1.998626489860602,
+      "CE_shift_unlawful_bits": 2.411835373591784,
+      "predicted_shift_increase_bits": 1.7448976147899233
+    }
+  },
+  "conventions": {
+    "K": "K = (d+1) + d = 2d+1 (readout params incl. bias + input dim)",
+    "flops_train": "per IRLS iter: 2nD^2 + 7nD + 14n + (2/3)D^3 + 3D^2 + 4D (D = d+1) + one loss eval (2nD+6n+2D) per halving step",
+    "flops_infer": "2*n_test*D + 5*n_test"
+  }
+}

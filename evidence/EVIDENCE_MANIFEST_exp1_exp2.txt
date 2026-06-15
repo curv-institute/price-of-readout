@@ -1,0 +1,84 @@
+EVIDENCE MANIFEST — lcr-reproduction archive
+=============================================
+Date: 2026-06-10
+Paper: "Lawful Compression and the Price of Readout: Task-Relevant
+Uncertainty under Sufficiency, Interface Geometry, and Pre-Registered
+Measurement" (J.W. Miller, CURV Institute)
+
+Purpose. This manifest pins, by cryptographic digest, the evidence that
+the paper's two pre-registrations were committed before their
+corresponding experimental runs. The manifest itself is externally
+timestamped via OpenTimestamps (file EVIDENCE_MANIFEST.txt.ots in this
+repository): only the SHA-256 digest of this file leaves the machine,
+and the attestation is anchored in the Bitcoin blockchain via public
+calendar servers. The .ots file is created as a pending attestation,
+complete at the calendar servers immediately; it upgrades to a full
+Bitcoin attestation once the calendars' commitment is confirmed
+on-chain (run `ots upgrade EVIDENCE_MANIFEST.txt.ots`, then
+`ots verify EVIDENCE_MANIFEST.txt.ots` against this file). The same
+mechanism is applied to the full-history bundle digest below
+(lcr.bundle.ots in the repository root), which pins the entire commit
+history of this archive — including every commit listed here, its
+content, and its dates — as it existed on the manifest date.
+
+Evidence commits (this repository's history)
+--------------------------------------------
+E1 (lawful compression; archive label "track 3 / gate 2"):
+  pre-registration commit: 3b05461418dc562212588562acb0aa9a18191c1b
+    (experiments: pre-register track 3 gates 2-3 (lawful compression toy))
+  results commit:          341851624b3b0049d2f116524b7403a9fca5bb6d
+    (experiments: track 3 gates 2-3 executed -- passed)
+
+E2 (readout ladder; archive label "track 4 / experiment B"):
+  pre-registration commit: 6a3645ebc81b04b25b726276e95469b3afc8d8d6
+    (experiments: pre-register track 4 experiment B (readout geometry))
+  results commit:          1dca8225c7e4a6553b58b6b53d7e691eec639ec4
+    (experiments: track 4 experiment B executed -- gates 2-3 met)
+
+Annotated tag
+-------------
+submission-draft (tag object): 0840e5b673b0f71c6e7d09897ef5ad2c2434cc4e
+
+Full-history bundle
+-------------------
+Created from this repository at HEAD
+bb92112b7de71004b6428180e9a9e10053021e3a with
+  git bundle create lcr.bundle --all
+sha256(lcr.bundle) =
+  6a8422b3220f1afae1b3a3a9dc808494356b39b0efb43d4e8c090efe8ae33b24
+The bundle file itself is not stored in git (it is the repository); its
+digest above and its OpenTimestamps attestation (lcr.bundle.ots) are.
+The bundle encodes every commit object reachable from all refs, so its
+digest pins the complete history including the four evidence commits,
+their ancestry order, and all commit metadata.
+
+File digests at HEAD (bb92112b7de71004b6428180e9a9e10053021e3a)
+---------------------------------------------------------------
+sha256(mlr-proof-program/experiments/track4_gateB/verify_xor_min_e.py) =
+  aa9f4eed57e7ccd7acc7936fc2c7dce06063ea32fee1795843ac3e4d012fd165
+sha256(mlr-proof-program/experiments/track3_gate2/PREREGISTRATION.md) =
+  a493e875c781e3e3f9fb02574c6517444d105f1df242968c1e1b23dd550826bc
+sha256(mlr-proof-program/experiments/track4_gateB/PREREGISTRATION.md) =
+  0950877b95efcefbd2910b2b61cb817b3983a7078264c8936781d86ce63526a5
+
+Verification recipe (once the archive is public)
+------------------------------------------------
+1. ots verify EVIDENCE_MANIFEST.txt.ots   (proves this manifest existed
+   no later than the attested Bitcoin block time)
+2. Recreate the bundle from the archive at the HEAD above and compare
+   its sha256 to the value pinned here; or verify lcr.bundle.ots
+   directly against an independently obtained copy of the bundle.
+3. git verify the four evidence commits and the submission-draft tag
+   exist in the bundled history with the listed hashes; commit hashes
+   are themselves content addresses over tree, parents, and dates.
+
+NOTE (2026-06-12): the hosting repository was renamed
+curv-institute/lcr-reproduction -> curv-institute/por-reproduction
+(GitHub redirects the old name), following the paper's retitle to
+"The Price of Readout: Sufficiency, Interface Geometry, and the
+Uncertainty That Testing Cannot See". This dated note is the only
+post-attestation change to this file; the OpenTimestamps attestation
+(EVIDENCE_MANIFEST.txt.ots) covers this file as it existed on the
+manifest date (2026-06-10) -- verify against that committed version in
+this repository's history. Every digest above pins content, not
+names, and is unchanged.

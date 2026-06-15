@@ -1,0 +1,259 @@
+{
+ "_construction": {
+  "d_feat": 16,
+  "k_act": 4,
+  "n_atoms": 1820,
+  "prior_P(Y=1)": 0.25,
+  "H(Y)_bits": 0.8112781244591328
+ },
+ "cells": {
+  "dz4_seed0": {
+   "min_atom_dist": 0.08769761314539681,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.5420138691149485
+  },
+  "dz4_seed1": {
+   "min_atom_dist": 0.09497457946267628,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.5408126166615481
+  },
+  "dz4_seed2": {
+   "min_atom_dist": 0.07561137356915112,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.7026439650809816
+  },
+  "dz4_seed3": {
+   "min_atom_dist": 0.041617787370959905,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.6502324615509474
+  },
+  "dz4_seed4": {
+   "min_atom_dist": 0.11614690193267749,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.5865550117400973
+  },
+  "dz4_seed5": {
+   "min_atom_dist": 0.1011091090042937,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.6119065673789748
+  },
+  "dz4_seed6": {
+   "min_atom_dist": 0.06288178797753094,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.6726057816368184
+  },
+  "dz4_seed7": {
+   "min_atom_dist": 0.04980072224037294,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.6366622506294373
+  },
+  "dz4_seed8": {
+   "min_atom_dist": 0.10931214990988765,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.6293726858560992
+  },
+  "dz4_seed9": {
+   "min_atom_dist": 0.05776555820864928,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.48042101671333737
+  },
+  "dz6_seed0": {
+   "min_atom_dist": 0.23201246583646853,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.34118778699916946
+  },
+  "dz6_seed1": {
+   "min_atom_dist": 0.27178181678889635,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.30273930244013914
+  },
+  "dz6_seed2": {
+   "min_atom_dist": 0.08195681019521812,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.5994502679823502
+  },
+  "dz6_seed3": {
+   "min_atom_dist": 0.30918896991421213,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.499695721816802
+  },
+  "dz6_seed4": {
+   "min_atom_dist": 0.2751470714363308,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.38329901721957094
+  },
+  "dz6_seed5": {
+   "min_atom_dist": 0.3117124505374286,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.5421109903035458
+  },
+  "dz6_seed6": {
+   "min_atom_dist": 0.2706327250867384,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.5952797107360172
+  },
+  "dz6_seed7": {
+   "min_atom_dist": 0.14165990232161144,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.48539573300765954
+  },
+  "dz6_seed8": {
+   "min_atom_dist": 0.24010842541106522,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.5594376555346194
+  },
+  "dz6_seed9": {
+   "min_atom_dist": 0.21787147954555058,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.49034293469183804
+  },
+  "dz8_seed0": {
+   "min_atom_dist": 0.4672680122277592,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.04566079326986432
+  },
+  "dz8_seed1": {
+   "min_atom_dist": 0.39969951594825653,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.16204329399756223
+  },
+  "dz8_seed2": {
+   "min_atom_dist": 0.25757922683715284,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.5260239023896657
+  },
+  "dz8_seed3": {
+   "min_atom_dist": 0.3951010633386181,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.3652708366353374
+  },
+  "dz8_seed4": {
+   "min_atom_dist": 0.4390351804864379,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.09044988313537625
+  },
+  "dz8_seed5": {
+   "min_atom_dist": 0.5088887673655155,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.22332596558774218
+  },
+  "dz8_seed6": {
+   "min_atom_dist": 0.3867371307387967,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.5540300557611881
+  },
+  "dz8_seed7": {
+   "min_atom_dist": 0.3066646375139466,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.3736644404008239
+  },
+  "dz8_seed8": {
+   "min_atom_dist": 0.3972742217914905,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.4320566170266265
+  },
+  "dz8_seed9": {
+   "min_atom_dist": 0.36928353205056824,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.4236523347257275
+  },
+  "dz12_seed0": {
+   "min_atom_dist": 0.5610321159202092,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 1.1366524766850674e-07
+  },
+  "dz12_seed1": {
+   "min_atom_dist": 0.6865351743922559,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.09387513436010352
+  },
+  "dz12_seed2": {
+   "min_atom_dist": 0.5798113413448284,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.4106741111508676
+  },
+  "dz12_seed3": {
+   "min_atom_dist": 0.7267200780991722,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.06663054634230765
+  },
+  "dz12_seed4": {
+   "min_atom_dist": 0.6980832527730197,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 3.2619580491262635e-07
+  },
+  "dz12_seed5": {
+   "min_atom_dist": 0.5895283104184295,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 8.623482908354626e-07
+  },
+  "dz12_seed6": {
+   "min_atom_dist": 0.6018059989959659,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.06859156733650194
+  },
+  "dz12_seed7": {
+   "min_atom_dist": 0.6561563526396016,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 5.103288266799236e-05
+  },
+  "dz12_seed8": {
+   "min_atom_dist": 0.6128197072846299,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 0.026094738800774224
+  },
+  "dz12_seed9": {
+   "min_atom_dist": 0.5257720239526641,
+   "H(Y|Z)_bits": 0.0,
+   "CE_lin_star_bits": 3.794112349031858e-06
+  }
+ },
+ "dz4_CE_lin_star_mean": 0.6053226226363189,
+ "dz4_CE_lin_star_min": 0.48042101671333737,
+ "dz4_CE_lin_star_max": 0.7026439650809816,
+ "dz4_accounting": {
+  "K_i": 5,
+  "K_ii": 385,
+  "K_iii": 9100,
+  "E_inf_i": 15,
+  "E_inf_ii": 839,
+  "E_inf_iii": 23661,
+  "E_train_ii": 151135500000
+ },
+ "dz6_CE_lin_star_mean": 0.47989391207317117,
+ "dz6_CE_lin_star_min": 0.30273930244013914,
+ "dz6_CE_lin_star_max": 0.5994502679823502,
+ "dz6_accounting": {
+  "K_i": 7,
+  "K_ii": 513,
+  "K_iii": 12740,
+  "E_inf_i": 19,
+  "E_inf_ii": 1095,
+  "E_inf_iii": 34581,
+  "E_train_ii": 197253900000
+ },
+ "dz8_CE_lin_star_mean": 0.3196178122929914,
+ "dz8_CE_lin_star_min": 0.04566079326986432,
+ "dz8_CE_lin_star_max": 0.5540300557611881,
+ "dz8_accounting": {
+  "K_i": 9,
+  "K_ii": 641,
+  "K_iii": 16380,
+  "E_inf_i": 23,
+  "E_inf_ii": 1351,
+  "E_inf_iii": 45501,
+  "E_train_ii": 243372300000
+ },
+ "dz12_CE_lin_star_mean": 0.06659222271949154,
+ "dz12_CE_lin_star_min": 1.1366524766850674e-07,
+ "dz12_CE_lin_star_max": 0.4106741111508676,
+ "dz12_accounting": {
+  "K_i": 13,
+  "K_ii": 897,
+  "K_iii": 23660,
+  "E_inf_i": 31,
+  "E_inf_ii": 1863,
+  "E_inf_iii": 67341,
+  "E_train_ii": 335609100000
+ }
+}

@@ -1,0 +1,18 @@
+Curv campaign experiment evidence manifest — created 2026-06-11 (UTC)
+Pre-registration and amendment commits (timestamps = registration; all pre-unblinding):
+
+Experiment A (rift-jepa, jepa-lawfulness-fulldata-v1):
+  prereg:    af80286cbaff67597ba12878c1e7eef4f879ac3d
+  amendment: e59ae8a05cb67a35b6a20fc66dde10f6a853ae26 (analysis script + §5.9-A, selftest green)
+
+Experiment B (curv-wiki, expB_masking_real):
+  prereg:    d26850e3a86ce1b02aa1f5d1f474489369f5d669
+  script:    c13792a
+  amendment: dc7b1fd4d2d5c14aa0aa4c558a49f5f1122e58f6 (§5.9.A, difference-recovery selftest green)
+
+State at stamping: all extraction/training jobs in flight; NO unblinding analysis has run;
+no gated quantity exists. Selftest records (FAIL preserved + GREEN amended) committed in-repo.
+
+RESULTS closure appended 2026-06-12 (post-unblinding):
+  A RESULTS: rift-jepa 1f9e18f (+artifacts 4abffb5); verdicts: G-F1 FAIL both; G-F2 PRESERVED(vith)/MARGINAL(vitl); transfer interface-borne (~2.0-2.4 bits frozen vs <=0.13 info)
+  B RESULTS: curv-wiki 23a9015; all gates PASS; masking-at-scale reproduced
