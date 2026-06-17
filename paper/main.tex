@@ -175,9 +175,9 @@ representation, and prices it exactly. We prove that a
 representation can retain every bit of task information while a
 restricted readout remains strictly uncertain, with exact floors
 ($0.69$ bits for XOR under linear-threshold readouts; $0.54$ bits for
-a sparse-superposition family), and we determine in closed form what
-beating a floor must cost: for the superposition family, exactly the
-budgets with an unshared stored-parameter budget of at least $5$ and
+a minimal sparse-superposition instance), and we determine, under a
+declared affine-threshold accounting, what beating a floor costs for
+that instance: an unshared stored-parameter budget of at least $5$ and
 at least $8$ arithmetic operations. Pre-registered experiments
 (constructed Gaussian channels, finite-atom readout ladders, and
 CIFAR-10 CNNs trained with a
@@ -189,7 +189,8 @@ to $3.6$ bits under a cue-breaking shift while the control moved at
 most $0.02$ bits, and the damage separates measurably into an
 interface part and a representation part. We recommend reporting
 frozen-versus-refit evaluation pairs: testing alone cannot price the
-readout. The two failure modes the pair separates also appear on a
+readout. In a post-hoc external check (not pre-registered), the two
+failure modes the pair separates also appear on a
 pretrained language model (Pythia-410m): low-bit weight quantization is
 information-borne, with an irreducible refit floor and a sharp
 four-to-three-bit onset, while distribution shift is interface-borne,
@@ -501,7 +502,9 @@ property.
 \begin{definition}[population soft-readout cross-entropy optimum]
 \label{def:cestar}
 For a class $\cA_{\mathrm{soft}}$ of probabilistic readouts
-$q : z \mapsto q(\cdot \mid z)$ (each a distribution over $\cY$), the
+$q : z \mapsto q(\cdot \mid z)$ (each a distribution over $\cY$; the
+cross-entropy is extended-real, taking the value $+\infty$ when $q$
+assigns zero mass to a realized label), the
 \emph{population soft-readout optimum} under $P$ is
 \[
 \CE^{\star}_{\cA}(P) := \inf_{q \in \cA_{\mathrm{soft}}}
@@ -2185,8 +2188,10 @@ tint is informative about $y$ only through the train-time coupling:
 insufficiency by construction); the \textbf{lawful} arm trains
 decorrelated at $\rho_{\mathrm{eff}} = 1/|\cY| = 0.1$, the no-coupling
 fixed point: the tint is present with identical marginal statistics
-but carries zero label information, so the learned representation
-cannot exploit it. Shifts re-draw only the indicator, leaving image
+but carries zero \emph{population} label information, so it adds no task
+information any readout can use (a finite-sample model may still encode
+the independent nuisance, but cannot gain label information from it).
+Shifts re-draw only the indicator, leaving image
 content untouched: \emph{decorrelate} ($s$ uniform, independent of
 $y$; the primary shift, the marginal-controlled cue-breaking analogue
 of Experiment~1's sign flip) and \emph{anticorrelate} ($s = y$ with
@@ -2262,6 +2267,17 @@ confirmatory re-run --- a fresh $80$-cell sweep across all four couplings on
 separate hardware --- reproduces the committed seed-means within $\epsilon$
 (gate-level $\epsilon \le 0.05$ bits, $0.026$ bits on the gated decorrelate
 cell; per-cell $\le 0.31$ bits), every gate verdict unchanged.
+The gates are evaluated on seed-means with a normal-SE slack; two
+assumption-light per-seed checks corroborate the headline brittleness
+claim (G-B2) without that bound. An exact sign test that the naive arm's
+per-seed $\Delta_{\mathrm{transfer}}$ clears the committed $0.5$-bit
+threshold passes at every gated coupling ($9/10$ seeds at $\rho = 0.9$,
+$p = 0.011$; $10/10$ at $\rho \in \{0.95, 0.99\}$, $p = 0.00098$, the
+exact $n = 10$ floor), and an exact paired permutation test of
+naive-minus-lawful $\Delta_{\mathrm{transfer}}$ rejects at the $n = 10$
+two-sided floor $p = 2/2^{10} = 0.0020$ at all three couplings
+(reproduced by \texttt{paired\_tests.py} in the Experiment~3
+directory of the reproduction repository~\cite{porepro}).
 Table~\ref{tab:e3-cells} gives the
 naive arm's cell means under the primary shift and
 Figure~\ref{fig:exp3-masking} the masking curve, computed from the
@@ -2461,9 +2477,9 @@ system whose readout is fit under one distribution and deployed where
 the distribution may shift, evaluate the relevant shifts twice: once
 with the deployed readout frozen, once with the readout refit under
 the shifted distribution, and report the pair
-(Figure~\ref{fig:frozen-refit}). The frozen number is
-what deployment will experience; the refit number is what the
-representation still supports; their difference is the price of the
+(Figure~\ref{fig:frozen-refit}). The frozen number estimates the loss
+of the deployed frozen interface under the specified shift; the refit
+number is what the representation still supports; their difference is the price of the
 readout interface, and it is invisible to any protocol that reports
 only one of the two. In-distribution evaluation cannot substitute for
 the pair at any sample size: in both masking experiments it did
@@ -2734,6 +2750,29 @@ loose diagnostic of representation content: it treats the readout
 interface as a declared mathematical object, proves exact interface
 floors, and measures frozen-versus-refit deployment loss in bits.
 
+\paragraph{Spurious correlation and last-layer retraining.}
+A large empirical literature studies the same shift our masking
+experiments induce. Spurious-correlation benchmarks---ColoredMNIST and
+the invariant-risk program of Arjovsky et al.~\cite{arjovskyirm}, the
+\textsc{Wilds} distribution-shift suite of Koh et
+al.~\cite{kohwilds}, and the DomainBed evaluation of Gulrajani and
+Lopez-Paz~\cite{gulrajanidomainbed}---measure accuracy drops when a
+training-time cue decorrelates from the label at test time. Closest in
+mechanism, Kirichenko et al.~\cite{kirichenkodfr} show that
+\emph{retraining only the last layer} (DFR) on a small reweighted
+sample recovers most of the lost worst-group accuracy, evidence that
+the spurious feature was being read out rather than discarded by the
+backbone. We are not the first to refit a readout under shift, and we
+claim no novelty for the act. Our contribution is to turn that act
+into a measurement: report the frozen and refit losses as a
+\emph{pair} in bits, read their difference as the
+interface-borne-versus-representation-borne split of the damage
+(Section~\ref{sec:discussion}), and ground both against the exact
+readout-class entropy floors of Section~\ref{sec:superposition}. DFR
+asks whether last-layer retraining restores accuracy; the price of
+readout asks how many bits of the deployed loss that retraining can
+remove, and certifies how many it provably cannot.
+
 \paragraph{Structural information and computational budgets.}
 Concurrent work of Finzi et al.~\cite{finziepiplexity} introduces
 \emph{epiplexity}, the structural half of a time-bounded two-part
@@ -2871,7 +2910,7 @@ commit hashes:
 \begin{itemize}
 \raggedright
 \item Experiment 1 (lawful compression), archive directory\\
-{\small\texttt{mlr-proof-program/experiments/track3\_gate2/}}:\\
+{\small\texttt{experiments/experiment1\_gaussian/}}:\\
 pre-registration commit\\
 {\small\texttt{3b05461418dc562212588562acb0aa9a18191c1b}},\\
 results commit\\
@@ -2879,7 +2918,7 @@ results commit\\
 (script {\small\texttt{lawful\_compression\_experiment.py}};
 raw data \texttt{results.csv}, 110~rows).
 \item Experiment 2 (readout ladder), archive directory\\
-{\small\texttt{mlr-proof-program/experiments/track4\_gateB/}}:\\
+{\small\texttt{experiments/experiment2\_ladder/}}:\\
 pre-registration commit\\
 {\small\texttt{6a3645ebc81b04b25b726276e95469b3afc8d8d6}},\\
 results commit\\
@@ -2887,8 +2926,8 @@ results commit\\
 (script {\small\texttt{readout\_geometry\_experiment.py}};
 raw data \texttt{results.csv}, 120~rows).
 \item Experiment 3 (masking at scale), archive directory\\
-{\small\texttt{mlr-proof-program/experiments/}\allowbreak
-\texttt{expB\_masking\_real/}}:\\
+{\small\texttt{experiments/}\allowbreak
+\texttt{experiment3\_cifar/}}:\\
 pre-registration commit\\
 {\small\texttt{d26850e3a86ce1b02aa1f5d1f474489369f5d669}},\\
 pre-unblinding amendment commit\\
@@ -2919,7 +2958,7 @@ Experiment~1:
 % Two-column layout: command blocks set flush left at \footnotesize so
 % the longest command line fits the column; content identical.
 \begin{flushleft}\footnotesize
-\texttt{cd mlr-proof-program/experiments/track3\_gate2}\\
+\texttt{cd experiments/experiment1\_gaussian}\\
 \texttt{python3 lawful\_compression\_experiment.py -{}-analytic}\\
 {\itshape \hspace*{1.5em}(committed analytic predictions;
 Gauss--Hermite quadrature)}\\
@@ -2927,19 +2966,24 @@ Gauss--Hermite quadrature)}\\
 {\itshape \hspace*{1.5em}(full pre-registered run; writes
 \textup{\texttt{results.csv}})}
 \end{flushleft}
-For Experiment~2 and the machine-checked enumerations:
+For Experiment~2:
 \begin{flushleft}\footnotesize
-\texttt{cd mlr-proof-program/experiments/track4\_gateB}\\
+\texttt{cd ../experiment2\_ladder}\\
 \texttt{python3 readout\_geometry\_experiment.py -{}-analytic}\\
 {\itshape \hspace*{1.5em}(exact per-seed population floors;
 convex optimization)}\\
 \texttt{python3 readout\_geometry\_experiment.py}\\
 {\itshape \hspace*{1.5em}(full pre-registered run; writes
-\textup{\texttt{results.csv}})}\\
+\textup{\texttt{results.csv}})}
+\end{flushleft}
+For the machine-checked enumerations (standard library only; each
+asserts every claim and exits~0 in under a second):
+\begin{flushleft}\footnotesize
+\texttt{cd ../../theory\_verification}\\
 \texttt{python3 verify\_xor\_min\_e.py}\\
-{\itshape \hspace*{1.5em}(all machine-checked enumerations of
+{\itshape \hspace*{1.5em}(all enumerations of
 Appendix~\ref{app:enum}; asserts every claim)}\\
-\texttt{python3 ../kef\_frontier/superposition\_min\_e.py}\\
+\texttt{python3 superposition\_min\_e.py}\\
 {\itshape \hspace*{1.5em}(the superposition-frontier enumerations and
 case analyses of Appendix~\ref{app:enum-sup-frontier}; 23
 hard-asserted checks)}
@@ -2947,7 +2991,7 @@ hard-asserted checks)}
 For Experiment~3 (the 80 training runs need a GPU; the once-only
 analysis is CPU-bound):
 \begin{flushleft}\footnotesize
-\texttt{cd mlr-proof-program/experiments/expB\_masking\_real}\\
+\texttt{cd ../experiments/experiment3\_cifar}\\
 \texttt{python3 train\_run.py -{}-arm naive|lawful}\\
 \texttt{\hspace*{1.5em}-{}-rho 0.7|0.9|0.95|0.99 -{}-seed 0..9}\\
 {\itshape \hspace*{1.5em}(one of the 80 committed training cells;
@@ -2968,17 +3012,13 @@ strip by importing the pinned construction module (its SHA-256,
 Appendix~\ref{app:details-e3}, is asserted before import) against the
 CIFAR-10 test batch, and writes
 the figure PDFs under \texttt{figures/}; no measured value is transcribed
-by hand into the script. Regenerate with
+by hand into the script. Regenerate from the repository root with
 \begin{center}
-\texttt{python3 figures/make\_figures.py}.
+\texttt{python3 paper/figures/make\_figures.py}.
 \end{center}
 The paper then builds with two
 passes of \texttt{pdflatex -interaction=nonstopmode main.tex} in the
-directory
-\begin{center}
-\texttt{mlr-proof-program/papers/}\\
-\texttt{lawful-compression-readout-geometry/}.
-\end{center}
+\texttt{paper/} directory.
 
 \paragraph{Environment.} The committed Experiment~1--2 runs used
 Py\-thon 3.12.3
@@ -3150,6 +3190,28 @@ computationally bounded intelligence.
 \newblock arXiv preprint arXiv:2601.03220, 2026.
 \newblock \url{https://arxiv.org/abs/2601.03220}.
 
+\bibitem{arjovskyirm}
+M.~Arjovsky, L.~Bottou, I.~Gulrajani, and D.~Lopez-Paz.
+\newblock Invariant risk minimization.
+\newblock arXiv preprint arXiv:1907.02893, 2019.
+
+\bibitem{kohwilds}
+P.~W. Koh, S.~Sagawa, H.~Marklund, et al.
+\newblock {WILDS}: a benchmark of in-the-wild distribution shifts.
+\newblock In \emph{Proceedings of ICML}, 2021.
+
+\bibitem{gulrajanidomainbed}
+I.~Gulrajani and D.~Lopez-Paz.
+\newblock In search of lost domain generalization.
+\newblock In \emph{Proceedings of ICLR}, 2021.
+
+\bibitem{kirichenkodfr}
+P.~Kirichenko, P.~Izmailov, and A.~G. Wilson.
+\newblock Last layer re-training is sufficient for robustness to
+spurious correlations.
+\newblock In \emph{Proceedings of ICLR}, 2023.
+\newblock arXiv:2204.02937.
+
 \bibitem{borobia2026linear}
 H.~Borobia, E.~Segu\'i-Mas, and G.~Tormo-Carb\'o.
 \newblock Linear-readout floors and threshold recovery in computation in
@@ -3197,12 +3259,12 @@ machine check claimed in this appendix, and every other machine
 check claimed in the paper, is re-run with hard assertions by two
 committed scripts in the reproduction archive
 (Section~\ref{sec:reproducibility}):
-\texttt{experiments/\allowbreak track4\_gateB/\allowbreak
+\texttt{theory\_verification/\allowbreak
 verify\_xor\_min\_e.py} for Propositions~\ref{prop:quadratic},
 \ref{prop:sine}, \ref{prop:budget-trivial}, \ref{prop:minE},
 Remark~\ref{rem:costing-artifact}, and
 Theorem~\ref{thm:superposition}(iii); and
-\texttt{experiments/\allowbreak kef\_frontier/\allowbreak
+\texttt{theory\_verification/\allowbreak
 superposition\_min\_e.py} for Lemma~\ref{lem:breakpoint},
 Propositions~\ref{prop:bp-entropy}--\ref{prop:frontier-sup}, and
 Remark~\ref{rem:budget-correction}.
@@ -3333,7 +3395,7 @@ affine-threshold composition (Definition~\ref{def:acomp}) with
 $E \le 11$ computes XOR on $\{0,1\}^2$. The search space is finite; this
 subsection records its structure so the enumeration is auditable, and
 the committed script \texttt{verify\_xor\_min\_e.py}
-(under \texttt{experiments/track4\_gateB/}) executes it from scratch
+(under \texttt{theory\_verification/}) executes it from scratch
 with hard assertions (runtime under one second; Python
 standard library only).
 
@@ -3425,7 +3487,7 @@ superposition frontier
 The superposition frontier rests on three finite structures, each
 exhaustively enumerated by the committed script
 \texttt{superposition\_min\_e.py} (under
-\texttt{experiments/kef\_frontier/}; Python standard library only,
+\texttt{theory\_verification/}; Python standard library only,
 exact \texttt{Fraction} arithmetic, $23$ hard-asserted checks).
 
 \paragraph{Exact entropies of all $32$ partitions.} Each conditional
@@ -3696,8 +3758,7 @@ is recorded.
 \begin{table}[H]
 \centering
 \caption{Artifact map: names used in this paper against the
-corresponding names in the reproduction archive (locations relative to
-\texttt{mlr-proof-program/}). The archived pre-registration and results
+corresponding names in the reproduction archive (locations relative to the reproduction repository root~\cite{porepro}). The archived pre-registration and results
 files use the internal labels shown in the middle column; the map is
 provided for reproduction only.}
 \label{tab:artifacts}
@@ -3708,11 +3769,11 @@ provided for reproduction only.}
 This paper & Archive label & Archive location \\
 \midrule
 Experiment 1 (lawful compression) & ``track 3 / gate 2'' &
-\texttt{experiments/track3\_gate2/} \\
+\texttt{experiments/experiment1\_gaussian/} \\
 Experiment 2 (readout ladder) & ``track 4 / gate B'' &
-\texttt{experiments/track4\_gateB/} \\
+\texttt{experiments/experiment2\_ladder/} \\
 Experiment 3 (masking at scale) & ``experiment B''
-(\texttt{expB-masking-real-v1}) & \texttt{experiments/expB\_masking\_real/} \\
+(\texttt{expB-masking-real-v1}) & \texttt{experiments/experiment3\_cifar/} \\
 Criteria E1.1 / E1.2 / E1.3 & \texttt{G2-a} / \texttt{G2-b} /
 \texttt{G2-c} & Experiment 1 pre-registration \\
 Criteria E1.4 / E1.5 & \texttt{G3-a} / \texttt{G3-b} &
@@ -3726,17 +3787,17 @@ Experiment 3 pre-registration \\
 Measurement-quality criteria P1--P5 & \texttt{PQ1}--\texttt{PQ5} &
 all three pre-registrations \\
 Figure~\ref{fig:exp1-shift} data & \texttt{results.csv} (110 rows) &
-\texttt{experiments/track3\_gate2/} \\
+\texttt{experiments/experiment1\_gaussian/} \\
 Figure~\ref{fig:exp2-ladder} data & \texttt{results.csv} (120 rows) &
-\texttt{experiments/track4\_gateB/} \\
+\texttt{experiments/experiment2\_ladder/} \\
 Figure~\ref{fig:exp3-masking} data & \texttt{results.csv} (800 rows) &
-\texttt{experiments/expB\_masking\_real/} \\
+\texttt{experiments/experiment3\_cifar/} \\
 Construction module (pinned, Appendix~\ref{app:details}) &
-\texttt{spurious\_cifar.py} & \texttt{experiments/expB\_masking\_real/} \\
+\texttt{spurious\_cifar.py} & \texttt{experiments/experiment3\_cifar/} \\
 Machine checks (Appendix~\ref{app:enum}) & \texttt{verify\_xor\_min\_e.py} &
-\texttt{experiments/track4\_gateB/} \\
+\texttt{theory\_verification/} \\
 Machine checks (Appendix~\ref{app:enum-sup-frontier}) &
-\texttt{superposition\_min\_e.py} & \texttt{experiments/kef\_frontier/} \\
+\texttt{superposition\_min\_e.py} & \texttt{theory\_verification/} \\
 \bottomrule
 \end{tabular}
 \end{table}

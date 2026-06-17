@@ -656,15 +656,16 @@ def fig_pythia():
     for i in x:
         axa.text(i, q_iface[i] + q_info[i] + 0.04, q_lab[i], ha="center",
                  va="bottom", fontsize=6.4, color=VERMILLION)
-    axa.annotate("sharp 4$\\to$3-bit onset", xy=(2, 1.39), xytext=(0.45, 2.35),
-                 fontsize=6.6, color="0.2",
+    axa.annotate("sharp 4$\\to$3-bit onset", xy=(1.69, 0.95), xytext=(0.42, 1.5),
+                 ha="left", va="center", fontsize=6.6, color="0.2",
                  arrowprops=dict(arrowstyle="->", lw=0.7, color="0.45"))
     axa.set_xticks(x)
     axa.set_xticklabels([f"{b}-bit" for b in qbits])
     axa.set_ylabel("frozen loss above 16-bit refit (bits/byte)")
-    axa.set_ylim(0, 2.8)
+    axa.set_ylim(0, 3.05)
     axa.set_title("(a) weight quantization (in-distribution)", fontsize=8.0)
-    axa.legend(loc="upper center", frameon=False, handlelength=1.2)
+    axa.legend(loc="upper left", frameon=False, handlelength=1.2,
+               fontsize=6.6, borderaxespad=0.3)
     axa.set_axisbelow(True)
     axa.grid(axis="y", lw=0.4, alpha=0.4)
 
