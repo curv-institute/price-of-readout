@@ -18,16 +18,24 @@ null 0.0007). **G-B1, G-B2, G-B3, G-B4 all PASS.** `masking_at_scale_reproduced 
 
 **Science-column deltas (fresh vs committed `results.csv`, 800 rows, 0 key mismatches).**
 - disclosed analytic CE-bias: Δ = 0.000000 bits (identical, as required).
-- bootstrap SE: max Δ ≤ 0.015 bits.
+- bootstrap SE: max Δ = 0.0154 bits (≤ 0.016).
 - per-cell `value_bits`: max ε = **0.31 bits** (single-seed, on a `delta_transfer`
   difference-of-CEs in the descriptive *anticorrelate* shift).
-- **seed-mean `value_bits` (the level the gates use): max ε = 0.053 bits (descriptive);
-  0.026 bits over the gated *decorrelate* rows.**
+- **seed-mean `value_bits` (the level the gates use): max ε = 0.054 bits on the descriptive
+  *anticorrelate* shift; 0.026 bits over the gated *decorrelate* rows.**
 
 **Reading.** Per-cell deltas (~0.3 bits) are single-seed CNN-training non-determinism on
-difference quantities; they average to ≤0.05 bits at the seed-mean level the gates evaluate,
-which is why every gate reproduces. Documented epsilon: **gate-level (seed-mean) ≤ 0.05 bits;
-per-cell ≤ 0.31 bits.** Reproduces within epsilon; gate verdicts unchanged.
+difference quantities; they average down at the seed-mean level the gates evaluate, which is why
+every gate reproduces. Documented epsilon (scoped to what the gates use): **gated (decorrelate)
+seed-mean ≤ 0.026 bits; descriptive (anticorrelate) seed-mean ≤ 0.054 bits; per-cell ≤ 0.31
+bits.** Reproduces within epsilon; gate verdicts unchanged.
+
+**Provenance.** The validation runner `experiments/experiment3_cifar/run_batch.sh` used here
+(sha256 `6a44bd41…`) is a behavior-preserving `OUTDIR`-parameterization of the pinned
+`b6333e6d…` — a single line, `OUTDIR="${OUTDIR:-/vault/datasets/features/expB}"`, so the output
+dir is overridable; `OUTDIR` is used only as a path and changes no science. The edit and the
+`experiments/lib -> ../lib` import symlink are committed alongside this record. The `fourq.py`
+instrument sha matches its pin exactly (integrity gate fired: analyze.log "pins OK").
 
 **Evidence.** Fresh `results.csv`, `machine_summary.json`, and the diff are archived with the
 run at `/gfs/curv-campaign/exp3_run/` (and `exp3_run/evidence/`). Experiments 1 & 2 + theory

@@ -19,7 +19,7 @@ CONC="${2:?concurrency}"
 CELLS="${3:?cells-file}"
 HB="${4:?heartbeat-file}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
-OUTDIR="/vault/datasets/features/expB"
+OUTDIR="${OUTDIR:-/vault/datasets/features/expB}"
 mkdir -p "$OUTDIR" "$(dirname "$HB")"
 
 echo "[$NODE] run_batch start $(date -Is) concurrency=$CONC cells=$(wc -l < "$CELLS") outdir=$OUTDIR"
