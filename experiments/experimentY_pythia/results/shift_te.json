@@ -2,6 +2,11 @@
   "mode": "shift",
   "split": "te",
   "frozen": 0.6378007945574002,
-  "refit": 0.6071827372547133,
-  "wall_s": 34.223379373550415
+  "refit": 0.6093675098740848,
+  "refit_source": {
+    "textfile": "/vault/datasets/text/ood_te_wikipedia/data.txt",
+    "offset": 2000000,
+    "bytes": 8000000
+  },
+  "wall_s": 36.41450381278992
 }

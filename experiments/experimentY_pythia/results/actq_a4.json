@@ -1,6 +1,11 @@
 {
   "abits": 4,
   "frozen_id": 4.39063156305694,
-  "refit_id": 3.0004459827338366,
-  "wall_s": 42.24497413635254
+  "refit_id": 3.139654222115241,
+  "refit_source": {
+    "textfile": "/vault/datasets/text/wikitext103_raw/train.txt",
+    "offset": 0,
+    "bytes": 8000000
+  },
+  "wall_s": 43.698320388793945
 }

@@ -2,6 +2,11 @@
   "mode": "quant",
   "bits": 16,
   "frozen_id": 0.9961979255571681,
-  "refit_id": 0.8605353263470059,
-  "wall_s": 29.709679126739502
+  "refit_id": 0.975931929400742,
+  "refit_source": {
+    "textfile": "/vault/datasets/text/wikitext103_raw/train.txt",
+    "offset": 0,
+    "bytes": 8000000
+  },
+  "wall_s": 33.51649522781372
 }

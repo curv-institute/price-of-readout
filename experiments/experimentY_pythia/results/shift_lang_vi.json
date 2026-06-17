@@ -2,6 +2,11 @@
   "mode": "shift",
   "split": "q1",
   "frozen": 1.23839079122166,
-  "refit": 1.1965772925437914,
-  "wall_s": 34.009344816207886
+  "refit": 1.208878583860754,
+  "refit_source": {
+    "textfile": "/vault/datasets/text/ood_vi_wikipedia/data.txt",
+    "offset": 2000000,
+    "bytes": 8000000
+  },
+  "wall_s": 35.93611979484558
 }

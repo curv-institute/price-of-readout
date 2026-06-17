@@ -2,6 +2,11 @@
   "mode": "shift",
   "split": "q2",
   "frozen": 1.1019486102216758,
-  "refit": 1.0806993040644577,
-  "wall_s": 33.27388644218445
+  "refit": 1.0933971588286875,
+  "refit_source": {
+    "textfile": "/vault/datasets/text/expc_q2_ja_wikipedia/data.txt",
+    "offset": 2000000,
+    "bytes": 8000000
+  },
+  "wall_s": 33.585020780563354
 }

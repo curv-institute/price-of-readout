@@ -41,26 +41,28 @@ EPS_BPB  = 0.01    # |delta| per bits/byte cell (table values are shown to <=3 d
 EPS_CORR = 0.01    # |delta| per correlation (paper shows 2 dp)
 
 # ---- reference & expected (the v17.6 paper tables, transcribed) -----------------
-REF_QUANT = 0.861          # 16-bit head-refit refit_id, the quant-table reference (raw 0.860535)
+REF_QUANT = 0.976          # 16-bit head-refit refit_id, the quant-table reference
+                           # (disjoint train-slice refit; raw 0.975932). The earlier
+                           # eval-overlapping refit gave a leak-inflated 0.861.
 
 EXPECTED_QUANT = {  # bits -> (total, recoverable, irrecoverable, pct_interface)  (None = "---"/"free")
-    8: (0.001, None,  0.001, None),   # "free": refit fully recovers; irrecoverable ~= 0.001
-    4: (0.389, 0.222, 0.166, 57),
-    3: (1.990, 0.601, 1.390, 30),
-    2: (2.451, 0.894, 1.557, 36),
+    8: (0.021, 0.020, 0.001, None),   # "free": irrecoverable floor ~= 0.001
+    4: (0.273, 0.075, 0.198, 27),
+    3: (1.875, 0.430, 1.445, 23),
+    2: (2.336, 0.731, 1.605, 31),
 }
 EXPECTED_OOD = {  # display name -> (frozen, recovery)   (order = paper table order)
-    "code":       (0.68, 0.003),
-    "Japanese":   (1.10, 0.021),
-    "Vietnamese": (1.24, 0.042),
-    "Indonesian": (1.54, 0.063),
-    "Finnish":    (1.57, 0.031),
-    "Yoruba":     (2.22, 0.295),
-    "Swahili":    (2.34, 0.252),
-    "Welsh":      (2.46, 0.274),
+    "code":       (0.68, -0.033),
+    "Japanese":   (1.10, 0.009),
+    "Vietnamese": (1.24, 0.030),
+    "Indonesian": (1.54, 0.043),
+    "Finnish":    (1.57, 0.011),
+    "Yoruba":     (2.22, 0.261),
+    "Swahili":    (2.34, 0.242),
+    "Welsh":      (2.46, 0.253),
 }
-EXPECTED_CORR = {"pearson": 0.93, "spearman": 0.86, "n": 8}
-EXPECTED_Y5_MEAN_PCT = 40  # "~40% interface-borne" footnote (a8/a6/a4 -> 45/40/39, mean ~41)
+EXPECTED_CORR = {"pearson": 0.94, "spearman": 0.86, "n": 8}
+EXPECTED_Y5_MEAN_PCT = 31  # mixed-locus footnote (a8/a6/a4 -> 24/32/37, mean ~31)
 
 # ---- raw-file map: which JSON feeds which paper cell ----------------------------
 # NOTE: the Y3b language JSONs all carry "split":"q1" (vestigial argparse default,
@@ -143,11 +145,11 @@ def print_tables(r):
     c = r["corr"]
     print(f"\nPearson(frozen,recovery)  = {c['pearson']:.4f}  (paper {EXPECTED_CORR['pearson']})")
     print(f"Spearman(frozen,recovery) = {c['spearman']:.4f}  (paper {EXPECTED_CORR['spearman']})  n={c['n']}")
-    print("\n=== Y5 activation-quant footnote (~40% interface-borne) ===")
+    print("\n=== Y5 activation-quant footnote (mixed locus, ~31% interface-borne) ===")
     for a in (8, 6, 4):
         y = r["y5"][a]; print(f"a{a}: total={y['total']:.3f} recoverable={y['recoverable']:.3f} "
                               f"%interface={y['pct_interface']:.0f}%")
-    print(f"mean %interface (a8/a6/a4) = {r['y5_mean_pct']:.0f}%  (paper '~40%')")
+    print(f"mean %interface (a8/a6/a4) = {r['y5_mean_pct']:.0f}%  (paper '~31%')")
 
 
 def check(r):
@@ -207,13 +209,19 @@ def smoke(args):
               f"        --smoke does not fetch; run fetch/fetch_wikitext103.py "
               f"(see README.md) and/or pass --data-root.", flush=True)
         return [f"smoke: missing corpus {idcorpus}"]
+    # The refit is now fit on a slice of the WikiText-103 TRAIN split, disjoint
+    # from the test-split eval set; both smoke cells pass it explicitly.
+    traincorpus = Path(root) / "wikitext103_raw" / "train.txt"
+    if not traincorpus.exists():
+        return [f"smoke: missing refit corpus {traincorpus} (WikiText-103 train split)"]
+    train_flag = ["--refit-textfile", str(traincorpus)]
     fails = []
     with tempfile.TemporaryDirectory() as td:
         cells = [
-            (["--mode", "quant", "--bits", "16"], "quant_b16.json",
+            (["--mode", "quant", "--bits", "16"] + train_flag, "quant_b16.json",
              ("frozen_id", "refit_id")),
-            (["--mode", "shift", "--split", "id"], "shift_id.json",
-             ("frozen", "refit")),  # cheapest shift cell, ID corpus, no --textfile needed
+            (["--mode", "shift", "--split", "id"] + train_flag, "shift_id.json",
+             ("frozen", "refit")),  # ID corpus; refit on the disjoint train split
         ]
         for extra, committed, keys in cells:
             out = Path(td) / committed

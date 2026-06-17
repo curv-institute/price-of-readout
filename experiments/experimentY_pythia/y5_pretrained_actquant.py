@@ -54,20 +54,21 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default="EleutherAI/pythia-410m")
     ap.add_argument("--abits", type=int, required=True)
-    ap.add_argument("--idfile", default=None,
-                    help="override the ID (WikiText-103 test) corpus path (else Y1.TEXT['id'], i.e. $DATA_ROOT)")
     ap.add_argument("--ctx", type=int, default=512)
     ap.add_argument("--eval-bytes", type=int, default=2_000_000)
     ap.add_argument("--refit-bytes", type=int, default=8_000_000)
     ap.add_argument("--refit-tok", type=int, default=400_000)
+    ap.add_argument("--refit-offset", type=int, default=0)
+    ap.add_argument("--refit-textfile", default=None,
+                    help="refit corpus path override (disjoint from the test-split eval)")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
     dev = torch.device("cuda")
     from transformers import AutoTokenizer
     tok = AutoTokenizer.from_pretrained(args.model)
-    idpath = args.idfile or Y1.TEXT["id"]
-    ids, bl = Y1.load_tokens(tok, idpath, args.eval_bytes, args.ctx)
-    tr, _ = Y1.load_tokens(tok, idpath, args.refit_bytes, args.ctx)
+    refit_path = args.refit_textfile or Y1.TEXT["id"]
+    ids, bl = Y1.load_tokens(tok, Y1.TEXT["id"], args.eval_bytes, args.ctx)
+    tr, _ = Y1.load_tokens(tok, refit_path, args.refit_bytes, args.ctx, args.refit_offset)
     import time; t0 = time.time()
     _A["v"] = args.abits
     m = Y1.fresh(args.model, dev); install(m)
@@ -75,7 +76,9 @@ def main():
     m2 = Y1.fresh(args.model, dev); install(m2)
     Y1.head_refit(m2, tr, args.ctx, dev, args.refit_tok)
     refit = Y1.eval_bpb(m2, ids, bl, args.ctx, dev)
-    res = {"abits": args.abits, "frozen_id": frozen, "refit_id": refit, "wall_s": time.time() - t0}
+    res = {"abits": args.abits, "frozen_id": frozen, "refit_id": refit,
+           "refit_source": {"textfile": refit_path, "offset": args.refit_offset, "bytes": args.refit_bytes},
+           "wall_s": time.time() - t0}
     Path(args.out).parent.mkdir(parents=True, exist_ok=True); Path(args.out).write_text(json.dumps(res, indent=2))
     print("Y5_OK " + json.dumps(res))
 

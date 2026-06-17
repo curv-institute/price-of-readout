@@ -4,17 +4,33 @@
 
 **Post-hoc, NOT pre-registered** (unlike Experiments 1–3). See
 `experiments/experimentY_pythia/POSTHOC_NOTE.md`. This record certifies that the
-package regenerates the two v17.6 Discussion tables from its committed raw data.
+package regenerates the two Discussion tables + the activation-quant footnote from
+its committed raw data, under a **disjoint-refit protocol** (the head is refit on
+text disjoint from the evaluation set in every cell).
+
+**Disjoint-refit protocol (and a correction).** ID cells (weight- and
+activation-quant) evaluate on the WikiText-103 **test** split and refit on an 8 MB
+slice of the WikiText-103 **train** split (`--refit-textfile`); shift/OOD cells
+evaluate on the first 2 MB of the shifted corpus and refit on the following 8 MB
+(`--refit-offset 2000000`). An earlier version of this leg drew the refit text from
+the first 8 MB of the *same* file as the 2 MB eval set (and the WikiText-103 test
+split is only ~1.3 MB, so ID eval and refit were effectively identical), which let
+the head memorize the eval set and inflated every recovery number — most visibly the
+16-bit ID reference, which fell from a leak-inflated **0.861** to a disjoint
+**0.976** bits/byte. **Frozen** losses do not depend on the refit and are unchanged.
 
 **What was run.** The packaged `experiments/experimentY_pythia/verify.py` reads the
-17 raw per-cell JSONs in `experimentY_pythia/results/` (frozen/refit bits/byte from
+19 raw per-cell JSONs in `experimentY_pythia/results/` (frozen/refit bits/byte from
 `EleutherAI/pythia-410m`, head-only refit, ctx 512, eval 2 MB / refit 8 MB / 400k
-tok), recomputes `tab:pythia-quant` (quant decomposition vs the 16-bit head-refit
-reference 0.861), `tab:pythia-ood` (refit recovery vs OOD distance, n=8), the
-Pearson/Spearman correlations, and the Y5 activation-quant footnote, and asserts every
-cell against `experimentY_pythia/EXPECTED_NUMBERS.md`. **Result: `VERIFY: PASS`** —
-all cells match (Pearson 0.9287→0.93, Spearman 0.8571→0.86; quant 4/3/2-bit irrecoverable
-0.166/1.390/1.557; OOD recoveries +0.003…+0.274; Y5 mean ≈41%). Telugu
+tok, disjoint refit), recomputes `tab:pythia-quant` (quant decomposition vs the
+16-bit head-refit reference 0.976), `tab:pythia-ood` (refit recovery vs OOD distance,
+n=8), the Pearson/Spearman correlations, and the Y5 activation-quant footnote, and
+asserts every cell against `experimentY_pythia/EXPECTED_NUMBERS.md`. **Result:
+`VERIFY: PASS`** — all cells match (Pearson 0.9433→0.94, Spearman 0.8571→0.86; quant
+4/3/2-bit irrecoverable 0.198/1.445/1.605; OOD recoveries −0.033…+0.261; Y5 mean ≈31%).
+The central interface-borne-grows-with-OOD-distance finding is robust to the disjoint
+split (Pearson 0.94 vs 0.93); the weight-quant decomposition becomes *more*
+information-borne (4-bit %interface 57%→27%) once the eval-set leak is removed. Telugu
 (`shift_te.json`) is correctly excluded from the n=8 correlation as a multi-byte-script
 bits/byte artifact.
 
@@ -23,14 +39,17 @@ autocast, so end-to-end regeneration reproduces to ~2–3 decimals on the same G
 not bit-exactly across hardware/library versions (same posture as Experiment 3 below).
 Documented tolerance: **|Δ bits/byte| ≤ 0.01 per cell, |Δ correlation| ≤ 0.01**;
 `%interface` ±1.5 pts; Y5 mean ±5 pts. `verify.py --smoke` re-runs two cells
-end-to-end on a GPU and checks them within the same per-cell epsilon.
+end-to-end on a GPU (with the disjoint `--refit-textfile`) and checks them within the
+same per-cell epsilon; it requires both `wikitext103_raw/test.txt` and `train.txt`.
 
-**Provenance.** Runners ship as the working-tree (`--textfile`) version of
-`mlr-proof-program/experiments/expD_quantization/pilot/y1_pretrained_por.py` (+ the
-`y5` activation-quant runner), with `$DATA_ROOT`/`--idfile` added for path portability
-(behavior-preserving). Monorepo *results* commits: Y1 `b78770f…`, Y3 `91244b0…`,
-Y3b `ceb19bf…`, Y5 `fc545de…`; paper v17.6 fold-in `e18054a…`. No pre-registration
-and no OpenTimestamps attestation exist for this leg (post-hoc, by design).
+**Provenance.** Runners (`experimentY_pythia/y1_pretrained_por.py` + the `y5`
+activation-quant runner) are the disjoint-refit-capable versions: the original
+runners plus optional `--refit-offset`/`--refit-textfile` flags whose defaults
+reproduce the original behavior exactly (behavior-preserving). The disjoint re-run
+artifacts (patched runners, all 19 result JSONs, `recompute_disjoint.py`, `run_all.sh`,
+per-cell logs) are archived at `/gfs/curv-campaign/exp3_run/pythia_disjoint/`. No
+pre-registration and no OpenTimestamps attestation exist for this leg (post-hoc, by
+design).
 
 ## Experiment 3 (CIFAR masking) — CONFIRMED: reproduces within epsilon (2026-06-16)
 

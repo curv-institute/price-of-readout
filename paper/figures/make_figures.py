@@ -631,16 +631,17 @@ def fig_pythia():
     # (a) weight quantization (bits/byte above the 16-bit head-refit reference):
     #     total = interface (head-refit-recoverable) + information (irreducible floor)
     qbits = ["8", "4", "3", "2"]
-    q_iface = [0.000, 0.222, 0.601, 0.894]   # recoverable / interface-borne
-    q_info = [0.001, 0.166, 1.390, 1.557]    # irrecoverable / information-borne floor
-    q_lab = ["free", "0.166", "1.390", "1.557"]
+    q_iface = [0.020, 0.075, 0.430, 0.731]   # recoverable / interface-borne (disjoint refit)
+    q_info = [0.001, 0.198, 1.445, 1.605]    # irrecoverable / information-borne floor
+    q_lab = ["free", "0.198", "1.445", "1.605"]
 
     # (b) distribution shift, Latin-script, n=8: frozen OOD-ness vs head-refit recovery
+    #     (disjoint within-domain refit; Pearson 0.94)
     ood = [
-        ("code", 0.68, 0.003), ("Japanese", 1.10, 0.021),
-        ("Vietnamese", 1.24, 0.042), ("Indonesian", 1.54, 0.063),
-        ("Finnish", 1.57, 0.031), ("Yoruba", 2.22, 0.295),
-        ("Swahili", 2.34, 0.252), ("Welsh", 2.46, 0.274),
+        ("code", 0.68, -0.033), ("Japanese", 1.10, 0.009),
+        ("Vietnamese", 1.24, 0.030), ("Indonesian", 1.54, 0.043),
+        ("Finnish", 1.57, 0.011), ("Yoruba", 2.22, 0.261),
+        ("Swahili", 2.34, 0.242), ("Welsh", 2.46, 0.253),
     ]
     far = {"Yoruba", "Swahili", "Welsh"}
 
@@ -680,11 +681,11 @@ def fig_pythia():
                  color=VERMILLION if name in far else BLUE)
         axb.annotate(name, (fx, fy), textcoords="offset points",
                      xytext=(4, -1.5), fontsize=5.8, color="0.3")
-    axb.text(0.04, 0.96, "Pearson $0.93$, $n=8$", transform=axb.transAxes,
+    axb.text(0.04, 0.96, "Pearson $0.94$, $n=8$", transform=axb.transAxes,
              ha="left", va="top", fontsize=6.8)
     axb.set_xlabel("frozen cross-entropy (OOD distance, bits/byte)")
     axb.set_ylabel("head-refit recovery (bits/byte)")
-    axb.set_ylim(-0.02, 0.34)
+    axb.set_ylim(-0.07, 0.31)
     axb.set_title("(b) distribution shift", fontsize=8.0)
     axb.set_axisbelow(True)
     axb.grid(lw=0.4, alpha=0.4)

@@ -2,6 +2,11 @@
   "mode": "shift",
   "split": "q1",
   "frozen": 0.6771397696854756,
-  "refit": 0.6745928796524199,
-  "wall_s": 33.52670764923096
+  "refit": 0.7104539632218465,
+  "refit_source": {
+    "textfile": "/vault/datasets/text/expc_q1_code_python/data.txt",
+    "offset": 2000000,
+    "bytes": 8000000
+  },
+  "wall_s": 34.349469900131226
 }

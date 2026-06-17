@@ -2593,7 +2593,7 @@ Quantizing the weights and measuring frozen versus head-refit cross-entropy on
 in-distribution text (WikiText-103) reproduces the information-borne signature:
 8-bit is free, and below it a floor appears that head-refit cannot remove, with
 a sharp onset between 4 and 3 bits (Table~\ref{tab:pythia-quant}; Figure~\ref{fig:pythia}a). Refitting the
-head recovers a meaningful but bounded fraction ($30$--$57\%$, the
+head recovers a bounded fraction ($23$--$31\%$, the
 interface-borne part); the remainder is irreducible information loss. On this
 well-trained model the frontier is earlier and steeper than on the from-scratch
 toy (which paid $0.007$ bits irrecoverable at 4-bit): trained weights use their
@@ -2605,14 +2605,15 @@ precision, so they tolerate quantization less --- the realistic regime.
 \hline
 bits & total & recoverable (interface) & irrecoverable (info) & \% interface\\
 \hline
-8 & 0.001 & --- & 0.001 & free\\
-4 & 0.389 & 0.222 & \textbf{0.166} & 57\%\\
-3 & 1.990 & 0.601 & \textbf{1.390} & 30\%\\
-2 & 2.451 & 0.894 & \textbf{1.557} & 36\%\\
+8 & 0.021 & 0.020 & 0.001 & free\\
+4 & 0.273 & 0.075 & \textbf{0.198} & 27\%\\
+3 & 1.875 & 0.430 & \textbf{1.445} & 23\%\\
+2 & 2.336 & 0.731 & \textbf{1.605} & 31\%\\
 \hline
 \end{tabular}
 \caption{Weight quantization on Pythia-410m (bits/byte, in-distribution;
-reference is the 16-bit head-refit score). Head-refit recovers the
+reference is the 16-bit head-refit score, $0.976$, fit on text disjoint from
+the evaluation set). Head-refit recovers the
 interface-borne part; the irrecoverable column is the information-borne floor,
 with a sharp 4-to-3-bit onset.}
 \label{tab:pythia-quant}
@@ -2626,8 +2627,8 @@ invisible when the ``shift'' is in-distribution. Adding low-resource,
 Pile-underrepresented languages exposes it, and the head-refit-recoverable
 fraction grows monotonically with how far out-of-distribution the shift is
 (frozen cross-entropy as the OOD-distance proxy): near zero for mild shifts, up
-to $\approx 0.27$ bits/byte for clearly-OOD languages
-(Table~\ref{tab:pythia-ood}; Figure~\ref{fig:pythia}b; Pearson $0.93$, Spearman $0.86$, $n=8$,
+to $\approx 0.26$ bits/byte for clearly-OOD languages
+(Table~\ref{tab:pythia-ood}; Figure~\ref{fig:pythia}b; Pearson $0.94$, Spearman $0.86$, $n=8$,
 Latin-script). At the far end the recovered fraction is only $\approx 17\%$ of
 the gap --- the body genuinely under-represents the language --- so very-OOD
 shift is mixed, a real interface-borne component over a representation-borne
@@ -2639,20 +2640,22 @@ residual; the frozen-versus-refit pair reads off both.
 \hline
 shift & frozen (OOD-ness) & refit recovery\\
 \hline
-code & 0.68 & $+0.003$\\
-Japanese & 1.10 & $+0.021$\\
-Vietnamese & 1.24 & $+0.042$\\
-Indonesian & 1.54 & $+0.063$\\
-Finnish & 1.57 & $+0.031$\\
-Yoruba & 2.22 & $\mathbf{+0.295}$\\
-Swahili & 2.34 & $\mathbf{+0.252}$\\
-Welsh & 2.46 & $\mathbf{+0.274}$\\
+code & 0.68 & $-0.033$\\
+Japanese & 1.10 & $+0.009$\\
+Vietnamese & 1.24 & $+0.030$\\
+Indonesian & 1.54 & $+0.043$\\
+Finnish & 1.57 & $+0.011$\\
+Yoruba & 2.22 & $\mathbf{+0.261}$\\
+Swahili & 2.34 & $\mathbf{+0.242}$\\
+Welsh & 2.46 & $\mathbf{+0.253}$\\
 \hline
 \end{tabular}
-\caption{Distribution shift on Pythia-410m (bits/byte). The
-head-refit-recoverable (interface-borne) part is near zero for
-in-distribution/mild shifts and grows to a quarter-bit for genuinely-OOD
-languages; recovery tracks OOD distance (Pearson $0.93$). Same-script-width
+\caption{Distribution shift on Pythia-410m (bits/byte; refit fit on
+within-domain text disjoint from the evaluation set). The
+head-refit-recoverable (interface-borne) part is near zero (and, for
+in-mixture code, marginally negative) for in-distribution/mild shifts and
+grows to a quarter-bit for genuinely-OOD
+languages; recovery tracks OOD distance (Pearson $0.94$). Same-script-width
 corpora only (a multi-byte-script point is excluded as a bits-per-byte artifact).}
 \label{tab:pythia-ood}
 \end{table}
@@ -2669,7 +2672,7 @@ information-borne floor; the floor jumps sharply between 4 and 3 bits, the
 information-borne signature. \textbf{(b)} Distribution shift across eight
 Latin-script corpora: head-refit recovery versus frozen cross-entropy (an
 OOD-distance proxy). Recovery is near zero for in-distribution/mild shifts and
-grows with OOD distance, the interface-borne signature (Pearson $0.93$,
+grows with OOD distance, the interface-borne signature (Pearson $0.94$,
 $n=8$). Values are the verified numbers of Tables~\ref{tab:pythia-quant} and
 \ref{tab:pythia-ood}.}
 \label{fig:pythia}
@@ -2680,8 +2683,8 @@ systems with exact ground truth appear on a real pretrained model, separated by
 the same frozen-versus-refit pair: weight quantization sits on the
 information-borne side (an irreducible floor), distribution shift on the
 interface-borne side (refit-recoverable, in proportion to OOD distance), and
-activation quantization is a distinct mixed locus ($\approx 40\%$
-interface-borne; protocol and per-bit numbers in
+activation quantization is a distinct mixed locus (roughly a third,
+$24$--$37\%$, interface-borne; protocol and per-bit numbers in
 Appendix~\ref{app:pythia}, Table~\ref{tab:pythia-actquant}). The boundary
 condition is the honest part: the shift leg is
 interface-borne only when the shift is genuinely out-of-distribution, which the
@@ -4232,18 +4235,23 @@ comparable only across corpora of similar script byte-width (this is
 why the multi-byte-script Telugu cell is excluded from the $n = 8$
 OOD correlation). Each cell scores a held-out evaluation corpus of
 $2$\,MB over up to $400$ non-overlapping windows of context length
-$512$, under \texttt{bfloat16} autocast. The in-distribution
-decomposition uses the WikiText-103 test split; each shift cell draws
-its text from that shift's domain. Within a cell the evaluation corpus
-is the first $2$\,MB and the refit corpus the first $8$\,MB of the same
-source file, so the refit text \emph{contains} the evaluation text as a
-subset. The reported recovery is therefore how much an in-domain head
-re-fit closes the frozen interface's gap, not generalization to unseen
-held-out text; this is adequate for the qualitative
-information-borne-versus-interface-borne contrast the leg is making, but
-is weaker than the disjoint-split protocol of the pre-registered
-experiments and is one reason the leg is reported as a post-hoc check
-rather than a gated result.
+$512$, under \texttt{bfloat16} autocast. \emph{The refit corpus is
+disjoint from the evaluation corpus in every cell.} For the
+in-distribution decomposition the evaluation set is the WikiText-103
+\emph{test} split and the head is refit on an $8$\,MB slice of the
+WikiText-103 \emph{train} split (disjoint by construction); for each
+shift cell the evaluation set is the first $2$\,MB of the shifted corpus
+and the refit set the following $8$\,MB (bytes $[2,10]$\,MB), again
+disjoint. So the reported recovery measures generalization of the
+re-fit head to unseen in-domain text, not memorization of the
+evaluation set. (An earlier version of this leg drew the refit text
+from the first $8$\,MB of the same file as the $2$\,MB evaluation set,
+so the refit text contained the evaluation set; that overlap inflated
+the recovered fractions---most visibly the in-distribution
+$16$-bit reference, which fell from a leak-inflated $0.861$ to a
+disjoint $0.976$ bits/byte---while leaving the frozen losses, which do
+not depend on the refit, unchanged. The numbers reported here are the
+disjoint-split ones.)
 
 \paragraph{Head-only refit (the interface-isolating readout fit).} The
 refit freezes the entire transformer body and trains only the readout
@@ -4266,20 +4274,22 @@ per-output-channel symmetric round-to-nearest fake quantization to the
 two-dimensional linear weights inside the transformer blocks only;
 token embeddings, the readout head, and all LayerNorm parameters are
 left at \texttt{bfloat16}. A bit-width $\ge 16$ is a no-op, and the
-$16$-bit head-refit loss ($0.861$ bits/byte) is the reference against
+$16$-bit head-refit loss ($0.976$ bits/byte, refit on the disjoint
+train slice) is the reference against
 which Table~\ref{tab:pythia-quant} reports the above-reference frozen
 and refit losses.
 
 \paragraph{Activation quantization (the mixed-locus measurement).} The
-$\approx\!40\%$-interface-borne activation-quantization result cited in
+mixed-locus activation-quantization result cited in
 Section~\ref{sec:pythia} uses the same frozen/head-refit in-distribution
-protocol, with per-tensor dynamic symmetric fake quantization applied to
+protocol (disjoint train-slice refit), with per-tensor dynamic symmetric
+fake quantization applied to
 the \emph{input activations} of every transformer-block linear via
 forward pre-hooks (the weights stay \texttt{bfloat16}). The
 interface-borne fraction is $(\text{frozen}-\text{refit}) /
 (\text{frozen}-\text{aref})$ relative to the $16$-bit-activation
-head-refit reference $\text{aref} = 0.8605$ bits/byte
-(Table~\ref{tab:pythia-actquant}); its mean of $\approx\!41\%$ places
+head-refit reference $\text{aref} = 0.976$ bits/byte
+(Table~\ref{tab:pythia-actquant}); its mean of $\approx\!31\%$ places
 activation quantization between the information-borne weight-quant side
 and the interface-borne shift side---a distinct mixed locus.
 
@@ -4288,8 +4298,9 @@ and the interface-borne shift side---a distinct mixed locus.
 \small
 \caption{Activation quantization on Pythia-410m (bits/byte,
 in-distribution; same frozen/head-refit protocol as
-Table~\ref{tab:pythia-quant}). ``total'' is the frozen loss above the
-$16$-bit-activation head-refit reference $0.8605$; ``recoverable'' is
+Table~\ref{tab:pythia-quant}, disjoint train-slice refit). ``total'' is
+the frozen loss above the
+$16$-bit-activation head-refit reference $0.976$; ``recoverable'' is
 the head-refit-removable (interface-borne) part; \%\,interface is their
 ratio. Single seeded run per cell.}
 \label{tab:pythia-actquant}
@@ -4297,9 +4308,9 @@ ratio. Single seeded run per cell.}
 \toprule
 activation bits & total & recoverable & \%\,interface \\
 \midrule
-8 & $0.484$ & $0.220$ & $45\%$ \\
-6 & $1.800$ & $0.713$ & $40\%$ \\
-4 & $3.530$ & $1.390$ & $39\%$ \\
+8 & $0.369$ & $0.090$ & $24\%$ \\
+6 & $1.685$ & $0.536$ & $32\%$ \\
+4 & $3.415$ & $1.251$ & $37\%$ \\
 \bottomrule
 \end{tabular}
 \end{table}

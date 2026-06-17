@@ -28,22 +28,17 @@ bytes). §2-bis: frozen = CE(r_P^quant/shift); head-refit = readout-budget optim
 """
 from __future__ import annotations
 
-import argparse, json, math, os, time
+import argparse, json, math, time
 from pathlib import Path
 import numpy as np, torch
 import torch.nn.functional as F
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-# Corpus root. The original run hard-coded /vault/datasets/text/...; here it is
-# overridable via the DATA_ROOT env var (or --data-root) so an external reader can
-# point at wherever the fetch/ scripts wrote the corpora. Default preserves the
-# original layout exactly. See experimentY_pythia/README.md (Packaging note).
-DATA_ROOT = os.environ.get("DATA_ROOT", "/vault/datasets/text")
-TEXT = {"id": f"{DATA_ROOT}/wikitext103_raw/test.txt",
-        "q1": f"{DATA_ROOT}/expc_q1_code_python/data.txt",
-        "q2": f"{DATA_ROOT}/expc_q2_ja_wikipedia/data.txt",
-        "sw": f"{DATA_ROOT}/ood_sw_wikipedia/data.txt",      # Swahili — OOD
-        "te": f"{DATA_ROOT}/ood_te_wikipedia/data.txt"}      # Telugu — very OOD
+TEXT = {"id": "/vault/datasets/text/wikitext103_raw/test.txt",
+        "q1": "/vault/datasets/text/expc_q1_code_python/data.txt",
+        "q2": "/vault/datasets/text/expc_q2_ja_wikipedia/data.txt",
+        "sw": "/vault/datasets/text/ood_sw_wikipedia/data.txt",      # Swahili — OOD
+        "te": "/vault/datasets/text/ood_te_wikipedia/data.txt"}      # Telugu — very OOD
 
 
 def per_out_quant_(W, bits):
@@ -64,8 +59,8 @@ def quant_body_(model, bits):
     return n
 
 
-def load_tokens(tok, path, max_bytes, ctx):
-    raw = Path(path).read_bytes()[:max_bytes]
+def load_tokens(tok, path, max_bytes, ctx, offset=0):
+    raw = Path(path).read_bytes()[offset:offset + max_bytes]
     text = raw.decode("utf-8", errors="ignore")
     ids = tok(text, return_tensors=None, add_special_tokens=False)["input_ids"]
     ids = np.array(ids, dtype=np.int64)
@@ -127,12 +122,14 @@ def main():
     ap.add_argument("--bits", type=int, default=16)
     ap.add_argument("--split", default="id", choices=["id", "q1", "q2", "sw", "te"])
     ap.add_argument("--textfile", default=None, help="shift mode: override corpus path for this split")
-    ap.add_argument("--idfile", default=None,
-                    help="quant mode: override the ID (WikiText-103 test) corpus path")
     ap.add_argument("--ctx", type=int, default=512)
     ap.add_argument("--eval-bytes", type=int, default=2_000_000)
     ap.add_argument("--refit-bytes", type=int, default=8_000_000)
     ap.add_argument("--refit-tok", type=int, default=400_000)
+    ap.add_argument("--refit-offset", type=int, default=0,
+                    help="byte offset into the refit corpus (for an eval-disjoint refit)")
+    ap.add_argument("--refit-textfile", default=None,
+                    help="refit corpus path override (e.g. wikitext train, disjoint from the test-split eval)")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
     dev = torch.device("cuda")
@@ -140,9 +137,9 @@ def main():
     t0 = time.time()
 
     if args.mode == "quant":
-        idpath = args.idfile or TEXT["id"]
-        ids, bl = load_tokens(tok, idpath, args.eval_bytes, args.ctx)
-        tr, _ = load_tokens(tok, idpath, args.refit_bytes, args.ctx)
+        refit_path = args.refit_textfile or TEXT["id"]
+        ids, bl = load_tokens(tok, TEXT["id"], args.eval_bytes, args.ctx)
+        tr, _ = load_tokens(tok, refit_path, args.refit_bytes, args.ctx, args.refit_offset)
         m = fresh(args.model, dev); quant_body_(m, args.bits)
         frozen = eval_bpb(m, ids, bl, args.ctx, dev)
         m2 = fresh(args.model, dev); quant_body_(m2, args.bits)
@@ -151,14 +148,17 @@ def main():
         res = {"mode": "quant", "bits": args.bits, "frozen_id": frozen, "refit_id": refit}
     else:
         path = args.textfile or TEXT[args.split]
+        refit_path = args.refit_textfile or path
         ids, bl = load_tokens(tok, path, args.eval_bytes, args.ctx)
-        tr, _ = load_tokens(tok, path, args.refit_bytes, args.ctx)
+        tr, _ = load_tokens(tok, refit_path, args.refit_bytes, args.ctx, args.refit_offset)
         m = fresh(args.model, dev)
         frozen = eval_bpb(m, ids, bl, args.ctx, dev)
         m2 = fresh(args.model, dev)
         head_refit(m2, tr, args.ctx, dev, args.refit_tok)
         refit = eval_bpb(m2, ids, bl, args.ctx, dev)
         res = {"mode": "shift", "split": args.split, "frozen": frozen, "refit": refit}
+    res["refit_source"] = {"textfile": refit_path, "offset": args.refit_offset,
+                           "bytes": args.refit_bytes}
     res["wall_s"] = time.time() - t0
     Path(args.out).parent.mkdir(parents=True, exist_ok=True); Path(args.out).write_text(json.dumps(res, indent=2))
     print("Y1_OK " + json.dumps(res))

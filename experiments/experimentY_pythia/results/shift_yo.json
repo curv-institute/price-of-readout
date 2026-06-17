@@ -2,6 +2,11 @@
   "mode": "shift",
   "split": "q1",
   "frozen": 2.2215249205997423,
-  "refit": 1.9270121602918182,
-  "wall_s": 35.65975308418274
+  "refit": 1.960695696087058,
+  "refit_source": {
+    "textfile": "/vault/datasets/text/ood_yo_wikipedia/data.txt",
+    "offset": 2000000,
+    "bytes": 8000000
+  },
+  "wall_s": 35.15554332733154
 }
