@@ -5,3 +5,5 @@ __pycache__/
 *.log
 *.out
 *.synctex.gz
+# ...but the Pythia replication ships its raw per-cell run logs as data
+!experiments/experimentY_pythia/results/*.log

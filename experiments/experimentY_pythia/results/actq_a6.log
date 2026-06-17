@@ -1,0 +1,7 @@
+Uninstalled 1 package in 0.29ms
+Installed 1 package in 1ms
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3476.72it/s]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 4100.59it/s]
+Y5_OK {"abits": 6, "frozen_id": 2.66044741073158, "refit_id": 1.9473484189872234, "wall_s": 42.39561438560486}

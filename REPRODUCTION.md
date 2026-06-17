@@ -1,5 +1,37 @@
 # Reproduction record
 
+## Pythia-410m external replication (Discussion §`sec:pythia`) — reproduces within epsilon
+
+**Post-hoc, NOT pre-registered** (unlike Experiments 1–3). See
+`experiments/experimentY_pythia/POSTHOC_NOTE.md`. This record certifies that the
+package regenerates the two v17.6 Discussion tables from its committed raw data.
+
+**What was run.** The packaged `experiments/experimentY_pythia/verify.py` reads the
+17 raw per-cell JSONs in `experimentY_pythia/results/` (frozen/refit bits/byte from
+`EleutherAI/pythia-410m`, head-only refit, ctx 512, eval 2 MB / refit 8 MB / 400k
+tok), recomputes `tab:pythia-quant` (quant decomposition vs the 16-bit head-refit
+reference 0.861), `tab:pythia-ood` (refit recovery vs OOD distance, n=8), the
+Pearson/Spearman correlations, and the Y5 activation-quant footnote, and asserts every
+cell against `experimentY_pythia/EXPECTED_NUMBERS.md`. **Result: `VERIFY: PASS`** —
+all cells match (Pearson 0.9287→0.93, Spearman 0.8571→0.86; quant 4/3/2-bit irrecoverable
+0.166/1.390/1.557; OOD recoveries +0.003…+0.274; Y5 mean ≈41%). Telugu
+(`shift_te.json`) is correctly excluded from the n=8 correlation as a multi-byte-script
+bits/byte artifact.
+
+**Epsilon.** The runner is single-run, deterministic-by-seed, but head-refit uses bf16
+autocast, so end-to-end regeneration reproduces to ~2–3 decimals on the same GPU class,
+not bit-exactly across hardware/library versions (same posture as Experiment 3 below).
+Documented tolerance: **|Δ bits/byte| ≤ 0.01 per cell, |Δ correlation| ≤ 0.01**;
+`%interface` ±1.5 pts; Y5 mean ±5 pts. `verify.py --smoke` re-runs two cells
+end-to-end on a GPU and checks them within the same per-cell epsilon.
+
+**Provenance.** Runners ship as the working-tree (`--textfile`) version of
+`mlr-proof-program/experiments/expD_quantization/pilot/y1_pretrained_por.py` (+ the
+`y5` activation-quant runner), with `$DATA_ROOT`/`--idfile` added for path portability
+(behavior-preserving). Monorepo *results* commits: Y1 `b78770f…`, Y3 `91244b0…`,
+Y3b `ceb19bf…`, Y5 `fc545de…`; paper v17.6 fold-in `e18054a…`. No pre-registration
+and no OpenTimestamps attestation exist for this leg (post-hoc, by design).
+
 ## Experiment 3 (CIFAR masking) — CONFIRMED: reproduces within epsilon (2026-06-16)
 
 A fresh, independent re-run of the Experiment-3 training grid from this public harness

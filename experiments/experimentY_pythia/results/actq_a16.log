@@ -1,0 +1,8 @@
+Downloading transformers (10.6MiB)
+ Downloaded transformers
+Installed 53 packages in 110ms
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3877.36it/s]
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3188.89it/s]
+Y5_OK {"abits": 16, "frozen_id": 0.9961979255571681, "refit_id": 0.8605353263470059, "wall_s": 100.06566071510315}

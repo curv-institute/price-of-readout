@@ -40,6 +40,9 @@ experiments/
   experiment1_gaussian/     Exp 1 — constructed Gaussian channel  (paper §"Experiment 1")
   experiment2_ladder/       Exp 2 — finite-atom readout ladder    (paper §"Experiment 2")
   experiment3_cifar/        Exp 3 — CIFAR-10 spurious-cue masking  (paper §"Experiment 3")
+  experimentY_pythia/       Pythia-410m external replication (paper Discussion §"External
+                            replication on a pretrained language model"). POST-HOC, NOT
+                            pre-registered — see its POSTHOC_NOTE.md.
 lib/                        fourq.py — the shared readout-measurement instrument (+ tests)
 theory_verification/        re-runs every finite enumeration in the paper, with hard assertions
 evidence/                   the timestamped evidence manifests + .ots attestations; PROVENANCE.md
@@ -54,6 +57,7 @@ Each subdirectory has its own README mapping files to paper sections.
 | Experiment 1 (Gaussian), Figure "exp1-shift" | `experiments/experiment1_gaussian/` |
 | Experiment 2 (readout ladder), Figure "exp2-ladder" | `experiments/experiment2_ladder/` |
 | Experiment 3 (CIFAR masking), Figures "exp3-masking/stimuli/cannibal" | `experiments/experiment3_cifar/` |
+| Discussion §"External replication on a pretrained language model" (`sec:pythia`), Tables `tab:pythia-quant` / `tab:pythia-ood` — **post-hoc, not pre-registered** | `experiments/experimentY_pythia/` |
 | Propositions on the XOR floor / minimal-E edge / decoders, Appendix enumerations | `theory_verification/verify_xor_min_e.py` |
 | Superposition-frontier lemmas/propositions | `theory_verification/superposition_min_e.py` |
 | The readout-measurement battery used by Exp 3 | `lib/fourq.py` (+ `lib/test_fourq.py`) |
@@ -120,6 +124,19 @@ PYTHONPATH=../../lib python3 analyze_masking.py --run
 # The shared instrument's own test suite
 cd ../../lib && PYTHONPATH=. python3 test_fourq.py
 ```
+
+For the **Pythia-410m external replication** (Discussion §"External replication
+on a pretrained language model"; **post-hoc, not pre-registered**), regenerate
+the two tables from the committed raw data — CPU, standard library only:
+
+```sh
+cd experiments/experimentY_pythia
+python3 verify.py            # reprints tab:pythia-quant / tab:pythia-ood + correlations, asserts vs EXPECTED_NUMBERS.md
+python3 verify.py --smoke    # ALSO re-runs two cells end-to-end on a GPU (needs torch + a corpus)
+```
+
+Full end-to-end regeneration needs a CUDA GPU and the corpora fetched by
+`experimentY_pythia/fetch/`; see that directory's `README.md` and `MANIFEST.md`.
 
 ### Figures and paper build
 

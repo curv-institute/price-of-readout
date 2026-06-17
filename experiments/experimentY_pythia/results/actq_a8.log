@@ -1,0 +1,7 @@
+Uninstalled 1 package in 0.46ms
+Installed 1 package in 1ms
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3591.79it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/292 [00:00<?, ?it/s]Loading weights: 100%|██████████| 292/292 [00:00<00:00, 3098.11it/s]
+Y5_OK {"abits": 8, "frozen_id": 1.344567628660566, "refit_id": 1.1243964583277732, "wall_s": 42.13473343849182}

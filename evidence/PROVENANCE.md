@@ -88,11 +88,14 @@ original location. Content SHA-256 is unchanged for every file.
 
 | This repository | Original location |
 | --- | --- |
-| `paper/main.tex`, `paper/main.pdf` | `mlr-proof-program/papers/lawful-compression-readout-geometry/` (paper text pass v17.5) |
+| `paper/main.tex`, `paper/main.pdf` | `mlr-proof-program/papers/lawful-compression-readout-geometry/` (paper text pass **v17.6**, commit `e18054a…`, which adds the Discussion §`sec:pythia` external-replication subsection and Tables `tab:pythia-quant`/`tab:pythia-ood`; v17.5 was the prior pass) |
 | `paper/figures/*.pdf`, `paper/figures/make_figures.py` | `mlr-proof-program/papers/lawful-compression-readout-geometry/figures/` |
 | `experiments/experiment1_gaussian/` | `mlr-proof-program/experiments/track3_gate2/` (internal label "track 3 / gate 2") |
 | `experiments/experiment2_ladder/` | `mlr-proof-program/experiments/track4_gateB/` (internal label "track 4 / experiment B") |
 | `experiments/experiment3_cifar/` | `mlr-proof-program/experiments/expB_masking_real/` (campaign "Experiment B") |
+| `experiments/experimentY_pythia/` (runners) | `mlr-proof-program/experiments/expD_quantization/pilot/` (`y1_pretrained_por.py`, `y5_pretrained_actquant.py`) — **post-hoc; no pre-registration, no OTS attestation** (see below) |
+| `experiments/experimentY_pythia/fetch/` | `/gfs/curv-campaign/scripts/` (`fetch_wikitext103.py`, `fetch_expc_q_corpora.py`, `fetch_ood_corpora.py`, `fetch_ood_latin.py`) |
+| `experiments/experimentY_pythia/results/` | `expY1_run/`, `expY3_run/`, `expY3b_run/`, `expY5_run/` (raw per-cell `*.json` + `*.log`) |
 | `lib/` | `mlr-proof-program/experiments/lib/` |
 | `theory_verification/verify_xor_min_e.py` | `mlr-proof-program/experiments/track4_gateB/verify_xor_min_e.py` |
 | `theory_verification/superposition_min_e.py` | `mlr-proof-program/experiments/kef_frontier/superposition_min_e.py` |
@@ -111,6 +114,31 @@ scripts compute; they are recorded here in full for transparency:
   SHA-256 pin on `spurious_cifar.py` is unchanged and still asserted
   before import. (No measured value is transcribed by hand; all numbers
   are read from the committed results.)
+
+### The Pythia external replication is post-hoc — no pre-registration, no OTS attestation
+
+`experiments/experimentY_pythia/` packages a **post-hoc, exploratory** external
+replication on Pythia-410m, reported in the paper's Discussion
+(§`sec:pythia`, Tables `tab:pythia-quant` / `tab:pythia-ood`, paper v17.6
+commit `e18054a…`). Unlike Experiments 1–3 it was **run after the fact and was
+not pre-registered**, so — deliberately — there is:
+
+- **no `PREREGISTRATION.md`** for it (a `POSTHOC_NOTE.md` occupies that slot and
+  says so explicitly), and
+- **no OpenTimestamps `.ots` attestation** in this directory for it, and none
+  should be minted. Creating a fresh `.ots` would falsely imply a before-the-run
+  ordering that does not exist for this leg.
+
+Its provenance instead rests **only** on the development-monorepo *results*
+commit hashes recorded in `experimentY_pythia/POSTHOC_NOTE.md` (Y1 `b78770f…`,
+Y3 `91244b0…`, Y3b `ceb19bf…`, Y5 `fc545de…`) and the paper fold-in `e18054a…`.
+The expD weight-quant `PREREGISTRATION.md` (prereg `ae03b1a…`) is the
+*methodological lineage* the Y-series scales up; it is a **different** experiment
+and is **not** this leg's pre-registration. None of the existing manifests in
+this directory pins any Y-series file; the package is reproducible (the two
+tables regenerate from its committed raw data via its `verify.py`), but its
+before-the-run status is — honestly — not attested, because it was not
+pre-registered.
 
 ### A note on textual references to a sibling study
 

@@ -1,0 +1,127 @@
+{
+  "_meta": {
+    "experiment": "Y-series Pythia-410m external replication (post-hoc, NOT pre-registered)",
+    "paper_section": "sec:pythia (v17.6 Discussion: 'External replication on a pretrained language model')",
+    "tables": [
+      "tab:pythia-quant",
+      "tab:pythia-ood"
+    ],
+    "generated_by": "verify.py regen() over results/*.json (no value transcribed by hand)"
+  },
+  "_env": {
+    "model": "EleutherAI/pythia-410m",
+    "id_corpus": "WikiText-103-raw test (Salesforce/wikitext, wikitext-103-raw-v1)",
+    "ctx": 512,
+    "eval_bytes": 2000000,
+    "refit_bytes": 8000000,
+    "refit_tok": 400000,
+    "refit": "head-only (lm_head/embed_out + final LayerNorm), AdamW lr=1e-4, bf16 autocast, sampler seed np.random.default_rng(0)",
+    "quant": "per-output-channel symmetric round-to-nearest fake-quant of transformer-block 2-D weights",
+    "score": "bits/byte = sum token NLL (bits) / raw UTF-8 bytes",
+    "python": ">=3.10 (run env 3.12.3)",
+    "deps": "torch (cu130), numpy, transformers>=4.40, safetensors, huggingface_hub; scipy not required (stats are stdlib)"
+  },
+  "reference_16bit_refit_id": 0.860535,
+  "quant": {
+    "8": {
+      "frozen": 0.997429,
+      "refit": 0.861143,
+      "total": 0.136894,
+      "recoverable": 0.136286,
+      "irrecoverable": 0.000608,
+      "pct_interface": 99.556006
+    },
+    "4": {
+      "frozen": 1.24918,
+      "refit": 1.026915,
+      "total": 0.388645,
+      "recoverable": 0.222265,
+      "irrecoverable": 0.16638,
+      "pct_interface": 57.189756
+    },
+    "3": {
+      "frozen": 2.851006,
+      "refit": 2.250306,
+      "total": 1.990471,
+      "recoverable": 0.6007,
+      "irrecoverable": 1.38977,
+      "pct_interface": 30.178809
+    },
+    "2": {
+      "frozen": 3.311577,
+      "refit": 2.417291,
+      "total": 2.451042,
+      "recoverable": 0.894287,
+      "irrecoverable": 1.556755,
+      "pct_interface": 36.485981
+    }
+  },
+  "ood": {
+    "code": {
+      "frozen": 0.67714,
+      "refit": 0.674593,
+      "recovery": 0.002547
+    },
+    "Japanese": {
+      "frozen": 1.101949,
+      "refit": 1.080699,
+      "recovery": 0.021249
+    },
+    "Vietnamese": {
+      "frozen": 1.238391,
+      "refit": 1.196577,
+      "recovery": 0.041813
+    },
+    "Indonesian": {
+      "frozen": 1.539099,
+      "refit": 1.475827,
+      "recovery": 0.063272
+    },
+    "Finnish": {
+      "frozen": 1.569821,
+      "refit": 1.539167,
+      "recovery": 0.030653
+    },
+    "Yoruba": {
+      "frozen": 2.221525,
+      "refit": 1.927012,
+      "recovery": 0.294513
+    },
+    "Swahili": {
+      "frozen": 2.340483,
+      "refit": 2.088971,
+      "recovery": 0.251512
+    },
+    "Welsh": {
+      "frozen": 2.461055,
+      "refit": 2.187494,
+      "recovery": 0.273562
+    }
+  },
+  "ood_correlations": {
+    "pearson": 0.9287,
+    "spearman": 0.8571,
+    "n": 8,
+    "excluded": {
+      "Telugu": "shift_te.json frozen=0.638; multi-byte script deflates bits/byte"
+    }
+  },
+  "y5_activation_quant": {
+    "8": {
+      "total": 0.484032,
+      "recoverable": 0.220171,
+      "pct_interface": 45.486875
+    },
+    "6": {
+      "total": 1.799912,
+      "recoverable": 0.713099,
+      "pct_interface": 39.618546
+    },
+    "4": {
+      "total": 3.530096,
+      "recoverable": 1.390186,
+      "pct_interface": 39.380954
+    }
+  },
+  "y5_mean_pct_interface": 41.5
+}
