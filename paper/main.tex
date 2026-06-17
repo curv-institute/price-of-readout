@@ -2257,7 +2257,12 @@ differences.
 \paragraph{Results.} All five committed criteria pass
 (Table~\ref{tab:e3-gates}); the verdict rule committed in the
 registration (all four pass/fail criteria must pass) is met, so
-the masking signature is \emph{reproduced at scale}. Table~\ref{tab:e3-cells} gives the
+the masking signature is \emph{reproduced at scale}. An independent
+confirmatory re-run --- a fresh $80$-cell sweep across all four couplings on
+separate hardware --- reproduces the committed seed-means within $\epsilon$
+(gate-level $\epsilon \le 0.05$ bits, $0.026$ bits on the gated decorrelate
+cell; per-cell $\le 0.31$ bits), every gate verdict unchanged.
+Table~\ref{tab:e3-cells} gives the
 naive arm's cell means under the primary shift and
 Figure~\ref{fig:exp3-masking} the masking curve, computed from the
 committed per-seed results file.
@@ -2440,6 +2445,15 @@ natural spurious correlations (Section~\ref{sec:limitations}).
 
 \section{Discussion}
 \label{sec:discussion}
+
+The recent turn toward observer-dependent information has two
+complementary edges: how much reusable \emph{structure} a
+computation-bounded learner can extract from data---measured by
+epiplexity in concurrent work of Finzi et al.~\cite{finziepiplexity}---and
+how much \emph{task-predictive} information a readout-bounded observer
+can actually use, which is the edge this paper prices exactly
+(Section~\ref{sec:related}), together with what deploying that readout
+costs under distribution shift.
 
 \paragraph{Recommendation: report frozen-versus-refit pairs.} The
 paper's practical output is a reporting practice, not a theorem. For a
@@ -2701,6 +2715,29 @@ difference is that this paper does not use probe performance as a
 loose diagnostic of representation content: it treats the readout
 interface as a declared mathematical object, proves exact interface
 floors, and measures frozen-versus-refit deployment loss in bits.
+
+\paragraph{Structural information and computational budgets.}
+Concurrent work of Finzi et al.~\cite{finziepiplexity} introduces
+\emph{epiplexity}, the structural half of a time-bounded two-part
+code: under a fixed compute budget it separates the information in a
+dataset into the description length of the best time-bounded model and
+the residual predictive loss, and uses the former to study data
+selection and out-of-distribution transfer. That decomposition is
+complementary to ours on two axes. First, within the
+structure/randomness split epiplexity targets the \emph{structural}
+component, whereas $H_{\cA}$ and $\CE^{\star}_{\cA}$ measure the
+task-predictive component---which that work explicitly groups with
+$\mathcal{V}$-entropy and computational pseudoentropy as the
+``random'' half it sets aside. Second, epiplexity bounds
+\emph{computation time} and is task-agnostic, while we bound a declared
+\emph{readout class} on a fixed task and price the residual entropy
+floor exactly; and our deployment object $\CEQ{\rP}$, with its
+interface-borne-versus-representation-borne split under shift, has no
+analog in a task-agnostic structural measure. The two compose:
+epiplexity asks whether data carries reusable structure at all; the
+price of readout asks how much of it a bounded readout converts to
+task performance, and whether the shift-induced collapse is fixable at
+the interface.
 
 \paragraph{What is organization and what is new.}
 Section~\ref{sec:lawful} claims no novelty whatsoever: it is a clean
@@ -3086,6 +3123,14 @@ K.~Ethayarajh, Y.~Choi, and S.~Swayamdipta.
 $\mathcal{V}$-usable information.
 \newblock In \emph{Proceedings of ICML}, 2022.
 \newblock arXiv:2110.08420.
+
+\bibitem{finziepiplexity}
+M.~Finzi, S.~Qiu, Y.~Jiang, P.~Izmailov, J.~Z. Kolter, and
+A.~G. Wilson.
+\newblock From entropy to epiplexity: rethinking information for
+computationally bounded intelligence.
+\newblock arXiv preprint arXiv:2601.03220, 2026.
+\newblock \url{https://arxiv.org/abs/2601.03220}.
 
 \bibitem{borobia2026linear}
 H.~Borobia, E.~Segu\'i-Mas, and G.~Tormo-Carb\'o.
