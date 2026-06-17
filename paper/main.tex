@@ -651,7 +651,7 @@ $I(Y; X) = I(Y; Z) + I(Y; X \mid Z)$ together with $I(Y; Z \mid X) = 0$
 \cite[Thm.~2.8.1]{coverthomas}. Both theorems below fall out of
 \eqref{eq:divergence} with no further work.
 
-\begin{theorem}[lawful compression is free]
+\begin{theorem}[sufficient compression is free]
 \label{thm:lawful-preserve}
 Assume (A1)--(A2) and let $Z = \phi(X)$. The data-processing inequality
 always gives $H(Y \mid Z) \ge H(Y \mid X)$ and $I(Y; Z) \le I(Y; X)$. If
@@ -661,7 +661,7 @@ H(Y \mid Z) = H(Y \mid X), \qquad I(Y; Z) = I(Y; X).
 \]
 \end{theorem}
 
-\begin{theorem}[unlawful compression strictly costs]
+\begin{theorem}[insufficient compression strictly costs]
 \label{thm:unlawful-cost}
 Assume (A1)--(A2) and let $Z = \phi(X)$. If $\phi$ is not sufficient for
 $Y$, that is, $P_X(A) > 0$ for
@@ -716,7 +716,7 @@ and in error-probability terms: Bayes error from $Z$ is $0$, while the best
 error achievable through any $\Alin$-readout is $1/4$.
 \end{proposition}
 
-\begin{remark}[lawful compression can strictly degrade the interface]
+\begin{remark}[sufficient compression can strictly degrade the interface]
 \label{rem:sufficient-hurts}
 Theorem~\ref{thm:lawful-preserve} does \emph{not} survive the substitution
 $H \mapsto H_{\cA}$. Let $X' = (X_1, X_2, X_1 \oplus X_2)$ with
@@ -750,7 +750,7 @@ validated, Section~\ref{sec:exp3}).
 
 \subsection{Accounting consequence}
 
-\begin{corollary}[$K$ and $E$ may drop freely under lawfulness]
+\begin{corollary}[$K$ and $E$ may drop freely under sufficiency]
 \label{cor:accounting}
 Let $M_X$ and $M_Z$ be representational processes operating on $X$ and on
 $Z = \phi(X)$, with declared costs $(K(M_X), E(M_X))$ and
@@ -1947,8 +1947,8 @@ $\varepsilon_j \sim \mathcal N(0,1)$ i.i.d.,
 $\rho_{\mathrm{train}} = 0.9$); the shift flips the coupling sign,
 $\rho_{\mathrm{shift}} = -0.9$, leaving every marginal unchanged.
 Three representations are compared: the full input $X$; the lawful
-compression $S$ (sufficient by construction); and the unlawful
-compression $N$ (insufficient by construction, since
+compression $S$ (sufficient by construction); and the insufficient
+compression $N$ (non-sufficient by construction, since
 $\operatorname{Var}(u \mid N) > 0$ exactly). The readout is logistic
 regression trained by damped Newton (fixed recipe), 10 seeds,
 $n_{\mathrm{train}} = 50{,}000$, $n_{\mathrm{test}} = 100{,}000$;
@@ -1983,7 +1983,7 @@ predicted maximum-likelihood bias ($0.0038$ bits) almost exactly. The
 estimator's measured bias is the predicted bias, which is what
 licenses the same estimator and tolerances at scale.
 
-\paragraph{The masking signature, first exhibition.} The unlawful arm
+\paragraph{The masking signature, first exhibition.} The insufficient arm
 carries the finding (Table~\ref{tab:e1-shift}). The construction makes
 the $N$ arm's insufficiency \emph{analytically} nearly invisible
 in-distribution at large $\dn$: the true excess
@@ -2052,7 +2052,7 @@ frozen-readout transfer cross-entropies $\CEhat_Q(\rP)$
 (Definition~\ref{def:ceq}), not conditional entropies; they may and do
 exceed the $1$-bit binary entropy bound. ``Lawful drift'' is
 $\overline{\CEhat}_{\mathrm{shift}}(S) - \overline{\CEhat}_{\mathrm{ID}}(S)$;
-the analytic in-distribution excess of the unlawful arm over the lawful arm
+the analytic in-distribution excess of the insufficient arm over the lawful arm
 is shown for the masking comparison.}
 \label{tab:e1-shift}
 \footnotesize
@@ -2185,7 +2185,8 @@ strength $0.20$ (Figure~\ref{fig:exp3-stimuli}). Two arms differ
 \emph{only} in the coupling: the
 \textbf{naive} arm trains at $\rho \in \{0.7, 0.9, 0.95, 0.99\}$ (the
 tint is informative about $y$ only through the train-time coupling:
-insufficiency by construction); the \textbf{lawful} arm trains
+insufficiency by construction); the \textbf{lawful} arm (the
+cue-decorrelated control) trains
 decorrelated at $\rho_{\mathrm{eff}} = 1/|\cY| = 0.1$, the no-coupling
 fixed point: the tint is present with identical marginal statistics
 but carries zero \emph{population} label information, so it adds no task
@@ -2654,9 +2655,9 @@ corpora only (a multi-byte-script point is excluded as a bits-per-byte artifact)
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{fig_pythia}
-\caption{External replication on Pythia-410m: the two failure modes the paper
-isolates on systems with exact ground truth, separated by the same
-frozen-versus-refit pair. \textbf{(a)} Weight quantization (in-distribution;
+\caption{External replication on Pythia-410m (post-hoc, not
+pre-registered): the two failure modes the paper isolates on systems with
+exact ground truth, separated by the same frozen-versus-refit pair. \textbf{(a)} Weight quantization (in-distribution;
 bits/byte above the 16-bit head-refit reference). Each bar splits the frozen
 loss into the head-refit-recoverable interface part and the irreducible
 information-borne floor; the floor jumps sharply between 4 and 3 bits, the
