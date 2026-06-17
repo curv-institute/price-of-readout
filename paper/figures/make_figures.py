@@ -618,14 +618,91 @@ def fig_expB_cannibal():
     plt.close(fig)
 
 
+# ---------------------------------------------------------------------------
+# Pythia-410m external replication (Discussion sec:pythia). Values are the
+# verified published numbers of Tables tab:pythia-quant and tab:pythia-ood
+# (post-hoc leg; checked by experimentY_pythia/verify.py against
+# EXPECTED_NUMBERS.md), hardcoded here so the figure cannot drift from the
+# tables. Full text-width two-panel figure (figure*).
+# ---------------------------------------------------------------------------
+def fig_pythia():
+    import numpy as np
+
+    # (a) weight quantization (bits/byte above the 16-bit head-refit reference):
+    #     total = interface (head-refit-recoverable) + information (irreducible floor)
+    qbits = ["8", "4", "3", "2"]
+    q_iface = [0.000, 0.222, 0.601, 0.894]   # recoverable / interface-borne
+    q_info = [0.001, 0.166, 1.390, 1.557]    # irrecoverable / information-borne floor
+    q_lab = ["free", "0.166", "1.390", "1.557"]
+
+    # (b) distribution shift, Latin-script, n=8: frozen OOD-ness vs head-refit recovery
+    ood = [
+        ("code", 0.68, 0.003), ("Japanese", 1.10, 0.021),
+        ("Vietnamese", 1.24, 0.042), ("Indonesian", 1.54, 0.063),
+        ("Finnish", 1.57, 0.031), ("Yoruba", 2.22, 0.295),
+        ("Swahili", 2.34, 0.252), ("Welsh", 2.46, 0.274),
+    ]
+    far = {"Yoruba", "Swahili", "Welsh"}
+
+    fig, (axa, axb) = plt.subplots(1, 2, figsize=(2 * FIG_W, 2.6))
+
+    # panel (a): stacked interface/information bars
+    x = list(range(len(qbits)))
+    axa.bar(x, q_iface, width=0.62, color=GREEN, edgecolor="black", lw=0.4,
+            zorder=3, label="interface (refit-recoverable)")
+    axa.bar(x, q_info, bottom=q_iface, width=0.62, color=VERMILLION,
+            edgecolor="black", lw=0.4, zorder=3,
+            label="information (irreducible floor)")
+    for i in x:
+        axa.text(i, q_iface[i] + q_info[i] + 0.04, q_lab[i], ha="center",
+                 va="bottom", fontsize=6.4, color=VERMILLION)
+    axa.annotate("sharp 4$\\to$3-bit onset", xy=(2, 1.39), xytext=(0.45, 2.35),
+                 fontsize=6.6, color="0.2",
+                 arrowprops=dict(arrowstyle="->", lw=0.7, color="0.45"))
+    axa.set_xticks(x)
+    axa.set_xticklabels([f"{b}-bit" for b in qbits])
+    axa.set_ylabel("frozen loss above 16-bit refit (bits/byte)")
+    axa.set_ylim(0, 2.8)
+    axa.set_title("(a) weight quantization (in-distribution)", fontsize=8.0)
+    axa.legend(loc="upper center", frameon=False, handlelength=1.2)
+    axa.set_axisbelow(True)
+    axa.grid(axis="y", lw=0.4, alpha=0.4)
+
+    # panel (b): OOD recovery vs frozen distance, least-squares trend
+    xs = np.array([d[1] for d in ood])
+    ys = np.array([d[2] for d in ood])
+    a, b = np.polyfit(xs, ys, 1)
+    xl = np.linspace(xs.min() - 0.06, xs.max() + 0.06, 50)
+    axb.plot(xl, a * xl + b, "-", color="0.55", lw=0.9, zorder=2)
+    for name, fx, fy in ood:
+        axb.plot(fx, fy, "o", ms=4.5, zorder=3,
+                 color=VERMILLION if name in far else BLUE)
+        axb.annotate(name, (fx, fy), textcoords="offset points",
+                     xytext=(4, -1.5), fontsize=5.8, color="0.3")
+    axb.text(0.04, 0.96, "Pearson $0.93$, $n=8$", transform=axb.transAxes,
+             ha="left", va="top", fontsize=6.8)
+    axb.set_xlabel("frozen cross-entropy (OOD distance, bits/byte)")
+    axb.set_ylabel("head-refit recovery (bits/byte)")
+    axb.set_ylim(-0.02, 0.34)
+    axb.set_title("(b) distribution shift", fontsize=8.0)
+    axb.set_axisbelow(True)
+    axb.grid(lw=0.4, alpha=0.4)
+
+    fig.tight_layout(w_pad=1.5)
+    fig.savefig(HERE / "fig_pythia.pdf")
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     fig_track3()
     fig_track4()
     fig_expB()
     fig_expB_stimuli()
     fig_expB_cannibal()
+    fig_pythia()
     print("wrote", HERE / "fig_exp1_shift.pdf")
     print("wrote", HERE / "fig_exp2_ladder.pdf")
     print("wrote", HERE / "fig_exp3_masking.pdf")
     print("wrote", HERE / "fig_exp3_stimuli.pdf")
     print("wrote", HERE / "fig_exp3_cannibal.pdf")
+    print("wrote", HERE / "fig_pythia.pdf")

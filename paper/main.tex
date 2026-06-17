@@ -2570,7 +2570,7 @@ scored in bits per byte so the numbers are comparable across tokenizations.
 Quantizing the weights and measuring frozen versus head-refit cross-entropy on
 in-distribution text (WikiText-103) reproduces the information-borne signature:
 8-bit is free, and below it a floor appears that head-refit cannot remove, with
-a sharp onset between 4 and 3 bits (Table~\ref{tab:pythia-quant}). Refitting the
+a sharp onset between 4 and 3 bits (Table~\ref{tab:pythia-quant}; Figure~\ref{fig:pythia}a). Refitting the
 head recovers a meaningful but bounded fraction ($30$--$57\%$, the
 interface-borne part); the remainder is irreducible information loss. On this
 well-trained model the frontier is earlier and steeper than on the from-scratch
@@ -2605,7 +2605,7 @@ Pile-underrepresented languages exposes it, and the head-refit-recoverable
 fraction grows monotonically with how far out-of-distribution the shift is
 (frozen cross-entropy as the OOD-distance proxy): near zero for mild shifts, up
 to $\approx 0.27$ bits/byte for clearly-OOD languages
-(Table~\ref{tab:pythia-ood}; Pearson $0.93$, Spearman $0.86$, $n=8$,
+(Table~\ref{tab:pythia-ood}; Figure~\ref{fig:pythia}b; Pearson $0.93$, Spearman $0.86$, $n=8$,
 Latin-script). At the far end the recovered fraction is only $\approx 17\%$ of
 the gap --- the body genuinely under-represents the language --- so very-OOD
 shift is mixed, a real interface-borne component over a representation-borne
@@ -2634,6 +2634,24 @@ languages; recovery tracks OOD distance (Pearson $0.93$). Same-script-width
 corpora only (a multi-byte-script point is excluded as a bits-per-byte artifact).}
 \label{tab:pythia-ood}
 \end{table}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig_pythia}
+\caption{External replication on Pythia-410m: the two failure modes the paper
+isolates on systems with exact ground truth, separated by the same
+frozen-versus-refit pair. \textbf{(a)} Weight quantization (in-distribution;
+bits/byte above the 16-bit head-refit reference). Each bar splits the frozen
+loss into the head-refit-recoverable interface part and the irreducible
+information-borne floor; the floor jumps sharply between 4 and 3 bits, the
+information-borne signature. \textbf{(b)} Distribution shift across eight
+Latin-script corpora: head-refit recovery versus frozen cross-entropy (an
+OOD-distance proxy). Recovery is near zero for in-distribution/mild shifts and
+grows with OOD distance, the interface-borne signature (Pearson $0.93$,
+$n=8$). Values are the verified numbers of Tables~\ref{tab:pythia-quant} and
+\ref{tab:pythia-ood}.}
+\label{fig:pythia}
+\end{figure*}
 
 \paragraph{What the replication adds.} Both failure modes the paper isolates on
 systems with exact ground truth appear on a real pretrained model, separated by
