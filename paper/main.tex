@@ -181,20 +181,21 @@ that instance: an unshared stored-parameter budget of at least $5$ and
 at least $8$ arithmetic operations. Pre-registered experiments
 (constructed Gaussian channels, finite-atom readout ladders, and
 CIFAR-10 CNNs trained with a
-controlled spurious color cue) test the predictions. The registered pass/fail criteria are
-met; one descriptive prediction fails and usefully exposes cue
-cannibalization. Cue-reliant models beat a cue-decorrelated
+controlled spurious color cue) test the predictions. The primary
+registered pass/fail criteria are met; one secondary criterion is
+reported inconclusive by its pre-registered power rule, and one
+descriptive prediction fails usefully by exposing cue cannibalization. Cue-reliant models beat a cue-decorrelated
 control in standard testing at every coupling strength, then lost up
 to $3.6$ bits under a cue-breaking shift while the control moved at
 most $0.02$ bits, and the damage separates measurably into an
 interface part and a representation part. We recommend reporting
 frozen-versus-refit evaluation pairs: testing alone cannot price the
-readout. In a post-hoc external check (not pre-registered), the two
-failure modes the pair separates also appear on a
-pretrained language model (Pythia-410m): low-bit weight quantization is
-information-borne, with an irreducible refit floor and a sharp
-four-to-three-bit onset, while distribution shift is interface-borne,
-recoverable in proportion to how far out-of-distribution the shift is.
+readout. A post-hoc external check (not pre-registered) on a pretrained
+language model (Pythia-410m) shows the same diagnostic pattern: low-bit
+weight quantization produces an irreducible refit floor, with a sharp
+four-to-three-bit onset, while several language shifts exhibit a
+refit-recoverable component that grows with an out-of-distribution
+distance proxy.
 \end{minipage}%
 \end{center}%
 \vskip 1.6em
@@ -272,7 +273,8 @@ most $0.021$ bits (Section~\ref{sec:exp3}). This \emph{masking} is
 hidden both by in-distribution testing and by any evaluation that
 silently refits the readout under the shifted distribution.
 \item \emph{Therefore: report frozen/refit evaluation pairs.} The
-frozen number is what deployment will experience; the refit number is
+frozen number estimates the loss of the deployed frozen interface under
+the specified shift; the refit number is
 what the representation still supports; their difference is the price
 of the readout interface, and no protocol that reports only one of
 the two can see it (Section~\ref{sec:discussion}).
@@ -2185,7 +2187,7 @@ strength $0.20$ (Figure~\ref{fig:exp3-stimuli}). Two arms differ
 \emph{only} in the coupling: the
 \textbf{naive} arm trains at $\rho \in \{0.7, 0.9, 0.95, 0.99\}$ (the
 tint is informative about $y$ only through the train-time coupling:
-insufficiency by construction); the \textbf{lawful} arm (the
+a spurious-cue condition by construction); the \textbf{lawful} arm (the
 cue-decorrelated control) trains
 decorrelated at $\rho_{\mathrm{eff}} = 1/|\cY| = 0.1$, the no-coupling
 fixed point: the tint is present with identical marginal statistics
@@ -2581,7 +2583,10 @@ pre-registered, unlike Experiments~1--3), we ask whether the
 frozen-versus-refit decomposition and the two failure modes it separates
 survive on a real, off-the-shelf pretrained model: \textbf{Pythia-410m}
 ($\approx 300$B Pile tokens). The same head-only-refit protocol applies,
-scored in bits per byte so the numbers are comparable across tokenizations.
+scored in bits per byte so the numbers are comparable across tokenizations;
+corpus sizes, the refit optimizer and budget, the quantization procedure,
+and the single-run (unaveraged) status of every cell are specified in
+Appendix~\ref{app:pythia}.
 
 \paragraph{Weight quantization is information-borne (an irreducible refit floor).}
 Quantizing the weights and measuring frozen versus head-refit cross-entropy on
@@ -2676,7 +2681,9 @@ the same frozen-versus-refit pair: weight quantization sits on the
 information-borne side (an irreducible floor), distribution shift on the
 interface-borne side (refit-recoverable, in proportion to OOD distance), and
 activation quantization is a distinct mixed locus ($\approx 40\%$
-interface-borne). The boundary condition is the honest part: the shift leg is
+interface-borne; protocol and per-bit numbers in
+Appendix~\ref{app:pythia}, Table~\ref{tab:pythia-actquant}). The boundary
+condition is the honest part: the shift leg is
 interface-borne only when the shift is genuinely out-of-distribution, which the
 OOD-distance curve makes quantitative. Caveats: a single model family and scale;
 round-to-nearest fake quantization; and bits per byte is comparable only across
@@ -2843,9 +2850,10 @@ nothing about natural (non-constructed) spurious correlations.
 \item \textbf{Sufficiency by construction, not inference.} No method for
 \emph{certifying} sufficiency of a learned representation is proposed or
 evaluated. The theorems say what sufficiency buys; deciding sufficiency in
-the wild is a separate (and hard) problem. (Experiment~3's lawful arm is
-sufficiency-by-construction \emph{for the semantic task}: the tint is
-made uninformative, not inferred to be.)
+the wild is a separate (and hard) problem. (Experiment~3's
+cue-decorrelated control makes the constructed tint label-independent;
+it does not certify sufficiency of the learned representation or of the
+clean image content.)
 \item \textbf{No production-scale claims.} Experiment~3 trains a
 $1.74$M-parameter CNN on CIFAR-10 (learned features on real images,
 no longer a constructed channel), but nothing here is evidence about
@@ -3559,8 +3567,10 @@ $\Kval$ bound, the script checks that the split
 $\{3,5,6\}$ vs.\ $\{9,10,12\}$ is the unique one-threshold split
 compatible with the required pattern, then verifies that in all four
 sign cases every merge pattern reaching $\Kval \le 3$
-reduces to one of ten interval conditions, each empty over the
-admissible ranges (boundary contacts included), and that no
+reduces to an infeasible interval condition---twelve case--condition
+pairs in all (three per sign case; ten distinct conditions, two
+recurring across cases), each empty over the
+admissible ranges (boundary contacts included)---and that no
 $\Kval = 3$ witness at $E = 8$ appears in $200{,}000$ random draws
 (evidence only; the case analysis is the proof). The script also
 re-runs the width-2 cut-pair enumeration of
@@ -4199,6 +4209,97 @@ $E_{\mathrm{i}}$ & $E_{\mathrm{ii}}$ & $E_{\mathrm{iii}}$ \\
 6 & 7 & 513 & 12740 & 19 & 1095 & 34581 \\
 8 & 9 & 641 & 16380 & 23 & 1351 & 45501 \\
 12 & 13 & 897 & 23660 & 31 & 1863 & 67341 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Pythia-410m Replication: Methods}
+\label{app:pythia}
+
+This appendix specifies the protocol behind the post-hoc Pythia-410m
+check of Section~\ref{sec:pythia} (Tables~\ref{tab:pythia-quant},
+\ref{tab:pythia-ood} and Figure~\ref{fig:pythia}). The leg is
+\emph{not} pre-registered; it is a confirmatory probe of whether the
+frozen-versus-refit diagnostic behaves on a real pretrained model as it
+does on the constructed systems, and it carries no pass/fail gate.
+
+\paragraph{Model, metric, and corpora.} All runs use the off-the-shelf
+\texttt{EleutherAI/pythia-410m} with its own tokenizer; no weights of
+the body are otherwise modified. Loss is reported in bits per byte,
+computed exactly as the summed token negative log-likelihood (in bits)
+divided by the raw UTF-8 byte count of the scored text, so values are
+comparable only across corpora of similar script byte-width (this is
+why the multi-byte-script Telugu cell is excluded from the $n = 8$
+OOD correlation). Each cell scores a held-out evaluation corpus of
+$2$\,MB over up to $400$ non-overlapping windows of context length
+$512$, under \texttt{bfloat16} autocast. The in-distribution
+decomposition uses the WikiText-103 test split; each shift cell draws
+its text from that shift's domain. Within a cell the evaluation corpus
+is the first $2$\,MB and the refit corpus the first $8$\,MB of the same
+source file, so the refit text \emph{contains} the evaluation text as a
+subset. The reported recovery is therefore how much an in-domain head
+re-fit closes the frozen interface's gap, not generalization to unseen
+held-out text; this is adequate for the qualitative
+information-borne-versus-interface-borne contrast the leg is making, but
+is weaker than the disjoint-split protocol of the pre-registered
+experiments and is one reason the leg is reported as a post-hoc check
+rather than a gated result.
+
+\paragraph{Head-only refit (the interface-isolating readout fit).} The
+refit freezes the entire transformer body and trains only the readout
+interface---the parameters whose names match
+\texttt{lm\_head}/\texttt{embed\_out} and the final
+\texttt{LayerNorm} (\texttt{final\_layer\_norm}/\texttt{ln\_f}). The
+optimizer is AdamW at learning rate $10^{-4}$ (PyTorch defaults
+otherwise), with batches of $8$ windows of $512$ tokens and a fixed
+budget of $400{,}000$ tokens ($\approx 98$ steps), sampled from the
+refit corpus with a fixed RNG seed. ``Frozen'' is the cross-entropy of
+the deployed readout without this refit; ``refit'' is the cross-entropy
+after it. Each reported number is a \emph{single} seeded run, not an
+average; because the refit uses \texttt{bfloat16} autocast, end-to-end
+regeneration reproduces to $2$--$3$ decimals across hardware/library
+versions (documented tolerance $|\Delta\,\text{bits/byte}| \le 0.01$
+per cell in the reproduction record~\cite{porepro}), not bit-exactly.
+
+\paragraph{Weight quantization.} The quantization decomposition applies
+per-output-channel symmetric round-to-nearest fake quantization to the
+two-dimensional linear weights inside the transformer blocks only;
+token embeddings, the readout head, and all LayerNorm parameters are
+left at \texttt{bfloat16}. A bit-width $\ge 16$ is a no-op, and the
+$16$-bit head-refit loss ($0.861$ bits/byte) is the reference against
+which Table~\ref{tab:pythia-quant} reports the above-reference frozen
+and refit losses.
+
+\paragraph{Activation quantization (the mixed-locus measurement).} The
+$\approx\!40\%$-interface-borne activation-quantization result cited in
+Section~\ref{sec:pythia} uses the same frozen/head-refit in-distribution
+protocol, with per-tensor dynamic symmetric fake quantization applied to
+the \emph{input activations} of every transformer-block linear via
+forward pre-hooks (the weights stay \texttt{bfloat16}). The
+interface-borne fraction is $(\text{frozen}-\text{refit}) /
+(\text{frozen}-\text{aref})$ relative to the $16$-bit-activation
+head-refit reference $\text{aref} = 0.8605$ bits/byte
+(Table~\ref{tab:pythia-actquant}); its mean of $\approx\!41\%$ places
+activation quantization between the information-borne weight-quant side
+and the interface-borne shift side---a distinct mixed locus.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Activation quantization on Pythia-410m (bits/byte,
+in-distribution; same frozen/head-refit protocol as
+Table~\ref{tab:pythia-quant}). ``total'' is the frozen loss above the
+$16$-bit-activation head-refit reference $0.8605$; ``recoverable'' is
+the head-refit-removable (interface-borne) part; \%\,interface is their
+ratio. Single seeded run per cell.}
+\label{tab:pythia-actquant}
+\begin{tabular}{rrrr}
+\toprule
+activation bits & total & recoverable & \%\,interface \\
+\midrule
+8 & $0.484$ & $0.220$ & $45\%$ \\
+6 & $1.800$ & $0.713$ & $40\%$ \\
+4 & $3.530$ & $1.390$ & $39\%$ \\
 \bottomrule
 \end{tabular}
 \end{table}
