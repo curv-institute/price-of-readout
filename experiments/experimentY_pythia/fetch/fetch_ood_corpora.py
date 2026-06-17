@@ -3,14 +3,22 @@
 # dependencies = ["huggingface_hub>=0.23", "pyarrow>=15"]
 # ///
 """Fetch corpora spanning OOD-distance from the Pile (for Y3 shift scale-confirm on Pythia).
-Low-resource languages clearly under-represented in the Pile + a structured domain."""
-import hashlib, json
+Low-resource languages clearly under-represented in the Pile + a structured domain.
+
+Output root: --out-root PATH > $DATA_ROOT env var > /vault/datasets/text default.
+Point the runner ($DATA_ROOT) at the same root afterwards (see README.md)."""
+import argparse, hashlib, json, os
 from pathlib import Path
 import pyarrow.parquet as pq
 from huggingface_hub import hf_hub_download, list_repo_files
 
+_ap = argparse.ArgumentParser(description="Fetch OOD-distance corpora (sw/te).")
+_ap.add_argument("--out-root", default=None,
+                 help="output root (default: $DATA_ROOT env var, else /vault/datasets/text)")
+_args = _ap.parse_args()
 CAP = 16 * 1024 * 1024
-OUT = Path("/vault/datasets/text")
+OUT = Path(_args.out_root or os.environ.get("DATA_ROOT", "/vault/datasets/text"))
+print(f"output root: {OUT}", flush=True)
 
 def flatten(repo, pattern, column, name, note):
     d = OUT / name; d.mkdir(parents=True, exist_ok=True)

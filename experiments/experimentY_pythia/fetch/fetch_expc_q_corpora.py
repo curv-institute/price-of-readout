@@ -12,15 +12,23 @@ Q2 (byte-distribution shift): non-Latin text — wikimedia/wikipedia 20231101.ja
 
 Acquisition only: nothing here reads or evaluates these against any model or
 tokenizer (expC clean-arm wall). Caps keep eval+refit budgets covered (~64MB).
+
+Output root: --out-root PATH > $DATA_ROOT env var > /vault/datasets/text default.
+Point the runner ($DATA_ROOT) at the same root afterwards (see README.md).
 """
-import hashlib, json
+import argparse, hashlib, json, os
 from pathlib import Path
 
 import pyarrow.parquet as pq
 from huggingface_hub import hf_hub_download, list_repo_files
 
+_ap = argparse.ArgumentParser(description="Fetch expC shift corpora (code q1 + Japanese q2).")
+_ap.add_argument("--out-root", default=None,
+                 help="output root (default: $DATA_ROOT env var, else /vault/datasets/text)")
+_args = _ap.parse_args()
 CAP = 64 * 1024 * 1024
-OUT = Path("/vault/datasets/text")
+OUT = Path(_args.out_root or os.environ.get("DATA_ROOT", "/vault/datasets/text"))
+print(f"output root: {OUT}", flush=True)
 
 
 def iter_records(local: str, column: str):

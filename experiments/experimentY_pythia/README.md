@@ -46,11 +46,18 @@ runs on CPU with the standard library only.
 
 ### 1. Fetch corpora (writes `$DATA_ROOT/<name>/data.txt` + a `MANIFEST.json`)
 
+Each fetch script's output root is, in precedence order, `--out-root PATH` > the
+`$DATA_ROOT` env var > the `/vault/datasets/text` default — the **same** root the
+runner reads, so exporting `DATA_ROOT` once makes fetch and reproduction agree (no
+script editing). With neither set, both default to `/vault/datasets/text`.
+
 ```sh
+export DATA_ROOT=/your/path              # optional; honored by fetch AND the runner
 uv run fetch/fetch_wikitext103.py        # ID (WikiText-103 test)
 uv run fetch/fetch_expc_q_corpora.py     # code (q1) + Japanese (q2)
 uv run fetch/fetch_ood_corpora.py        # Swahili (sw) + Telugu (te, excluded)
 uv run fetch/fetch_ood_latin.py          # vi / id / fi / cy / yo
+# or per-invocation: uv run fetch/fetch_wikitext103.py --out-root /your/path
 ```
 
 ### 2. Run the cells (GPU). Common args + per-cell flags are tabulated in `MANIFEST.md`.
@@ -101,11 +108,16 @@ Ends with `VERIFY: PASS — all cells reproduce within tolerance`.
 
 ## Packaging note (path portability + the `--textfile` flag)
 
-The original runner hard-coded corpus paths under `/vault/datasets/text/...`. For
-this package the corpus root is overridable:
+The original runner *and* the original fetch scripts hard-coded paths under
+`/vault/datasets/text/...`. For this package both the corpus root (where fetch
+writes, where the runner reads) is overridable, and they share the same knob so a
+single `export DATA_ROOT=...` makes acquisition and reproduction agree:
 
-- `DATA_ROOT=/your/path` (env var; default `/vault/datasets/text`) — rebases the
-  whole `TEXT` dict, so `quant`/`shift`/Y5 all read from your fetched corpora;
+- `DATA_ROOT=/your/path` (env var; default `/vault/datasets/text`) — honored by
+  **every fetch script** (sets the output root) and by the **runner** (rebases the
+  whole `TEXT` dict), so `quant`/`shift`/Y5 all read from your fetched corpora;
+- `--out-root PATH` — fetch-script flag; same effect as `DATA_ROOT` for that one
+  fetch, and takes precedence over the env var;
 - `--idfile PATH` — overrides just the ID (WikiText-103 test) path for `quant` and Y5;
 - `--textfile PATH` — overrides a shift corpus path (already present in the
   working-tree runner; **required** for the five OOD-curve languages).

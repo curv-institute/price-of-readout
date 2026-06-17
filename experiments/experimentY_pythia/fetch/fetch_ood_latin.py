@@ -3,14 +3,22 @@
 # dependencies = ["huggingface_hub>=0.23", "pyarrow>=15"]
 # ///
 """More Latin-script languages spanning OOD-distance from the Pile, for the Y3b recovery-vs-OOD
-curve. Latin script => bits/byte comparable to English (no multi-byte artifact)."""
-import hashlib, json
+curve. Latin script => bits/byte comparable to English (no multi-byte artifact).
+
+Output root: --out-root PATH > $DATA_ROOT env var > /vault/datasets/text default.
+Point the runner ($DATA_ROOT) at the same root afterwards (see README.md)."""
+import argparse, hashlib, json, os
 from pathlib import Path
 import pyarrow.parquet as pq
 from huggingface_hub import hf_hub_download, list_repo_files
 
+_ap = argparse.ArgumentParser(description="Fetch Latin-script OOD-curve corpora (vi/id/fi/cy/yo).")
+_ap.add_argument("--out-root", default=None,
+                 help="output root (default: $DATA_ROOT env var, else /vault/datasets/text)")
+_args = _ap.parse_args()
 CAP = 16 * 1024 * 1024
-OUT = Path("/vault/datasets/text")
+OUT = Path(_args.out_root or os.environ.get("DATA_ROOT", "/vault/datasets/text"))
+print(f"output root: {OUT}", flush=True)
 # (code, name) — varying Pile representation, all Latin script
 LANGS = [("id", "indonesian"), ("vi", "vietnamese"), ("fi", "finnish"),
          ("cy", "welsh"), ("yo", "yoruba")]

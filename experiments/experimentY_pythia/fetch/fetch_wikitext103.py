@@ -3,16 +3,26 @@
 # dependencies = ["huggingface_hub>=0.23", "pyarrow>=15"]
 # ///
 """Fetch WikiText-103-raw-v1 (Salesforce/wikitext) and flatten each split to a
-single raw UTF-8 text file under /vault/datasets/text/wikitext103_raw/.
-Records sha256 + byte counts in MANIFEST.json. Idempotent: skips existing outputs."""
-import hashlib, json, os, sys
+single raw UTF-8 text file under $DATA_ROOT/wikitext103_raw/ (default
+/vault/datasets/text). Records sha256 + byte counts in MANIFEST.json. Idempotent:
+skips existing outputs.
+
+Output root: --out-root PATH > $DATA_ROOT env var > /vault/datasets/text default.
+Point the runner ($DATA_ROOT) at the same root afterwards (see README.md)."""
+import argparse, hashlib, json, os, sys
 from pathlib import Path
 
 import pyarrow.parquet as pq
 from huggingface_hub import snapshot_download
 
-OUT = Path("/vault/datasets/text/wikitext103_raw")
+_ap = argparse.ArgumentParser(description="Fetch WikiText-103-raw-v1 splits.")
+_ap.add_argument("--out-root", default=None,
+                 help="output root (default: $DATA_ROOT env var, else /vault/datasets/text)")
+_args = _ap.parse_args()
+ROOT = Path(_args.out_root or os.environ.get("DATA_ROOT", "/vault/datasets/text"))
+OUT = ROOT / "wikitext103_raw"
 OUT.mkdir(parents=True, exist_ok=True)
+print(f"output root: {ROOT}", flush=True)
 manifest_path = OUT / "MANIFEST.json"
 manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
 

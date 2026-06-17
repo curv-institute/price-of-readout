@@ -22,7 +22,7 @@ Each fetch script writes `data.txt` + a `MANIFEST.json` under `$DATA_ROOT/<name>
 | split / language | dir under `$DATA_ROOT` | HF source | bytes | sha256 (data file) | fetched by |
 | --- | --- | --- | ---: | --- | --- |
 | ID (WikiText-103 **test**) | `wikitext103_raw/test.txt` | `Salesforce/wikitext` `wikitext-103-raw-v1` test | 1,287,656 | `bbf94c53a05abe9ee670d3b6343608095822c85e26de37c70b24fc571964574a` | `fetch_wikitext103.py` |
-| code (q1) | `expc_q1_code_python/data.txt` | `codeparrot/codeparrot-clean-valid` (python `content`), 64 MiB cap | 67,136,840 | `cbfd259747c03b57e1d2e9af2614cbfaed062c7b83ddc748410488c00a9a819e` | `fetch_expc_q_corpora.py` |
+| code (q1) | `expc_q1_code_python/data.txt` | `codeparrot/codeparrot-clean-valid` (python `content`), 64 MiB cap (overshot by the final record to the pinned 67,136,840 bytes) | 67,136,840 | `cbfd259747c03b57e1d2e9af2614cbfaed062c7b83ddc748410488c00a9a819e` | `fetch_expc_q_corpora.py` |
 | Japanese (q2) | `expc_q2_ja_wikipedia/data.txt` | `wikimedia/wikipedia` `20231101.ja`, 64 MiB cap | 67,112,647 | `df74a58f443efd50a555ab18f8e02c9b0b6b2ff56745869257141b52cc692be6` | `fetch_expc_q_corpora.py` |
 | Swahili (sw) | `ood_sw_wikipedia/data.txt` | `wikimedia/wikipedia` `20231101.sw`, 16 MiB cap | 16,782,614 | `84ee59acfc351f342f0418a499aefcb306d98af1c4dfec47b296a2a0d7c3f2be` | `fetch_ood_corpora.py` |
 | Telugu (te) — *excluded* | `ood_te_wikipedia/data.txt` | `wikimedia/wikipedia` `20231101.te`, 16 MiB cap | 16,781,266 | `52aaffcd350f48a9048f03cfb458fca3073f8bab91e197ff25896992296c4130` | `fetch_ood_corpora.py` |
@@ -38,14 +38,22 @@ corpus bytes (size + attribution), matching the repo's existing no-vendoring pat
 
 ## Fetch the data
 
+Each fetch script writes under an output root chosen by, in precedence order,
+`--out-root PATH` > the `$DATA_ROOT` env var > the `/vault/datasets/text` default.
+Then point the **runner** at that same root via `$DATA_ROOT` (no editing of any
+script needed). Example, fetching into a custom location and reproducing from it:
+
 ```sh
-# default writes under /vault/datasets/text/... ; edit OUT in a script, or just
-# fetch then point the runner at the result with $DATA_ROOT / --textfile / --idfile.
+export DATA_ROOT=/your/path        # honored by BOTH the fetch scripts and the runner
 uv run fetch/fetch_wikitext103.py        # ID (WikiText-103 test)
 uv run fetch/fetch_expc_q_corpora.py     # code (q1) + Japanese (q2)
 uv run fetch/fetch_ood_corpora.py        # Swahili (sw) + Telugu (te, excluded)
 uv run fetch/fetch_ood_latin.py          # vi / id / fi / cy / yo
+# equivalently, per-invocation: uv run fetch/fetch_wikitext103.py --out-root /your/path
 ```
+
+With no `--out-root` and no `$DATA_ROOT`, everything defaults to
+`/vault/datasets/text` (the original layout), so the commands below work unchanged.
 
 ## Exact command per paper cell
 

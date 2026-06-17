@@ -16,9 +16,12 @@ tables from the raw data the same way the paper's figure pipeline reads committe
     python3 verify.py --regen-only    # just print the tables, no assertions
 
 --smoke needs a CUDA GPU + the runner's deps (torch, transformers>=4.40, ...); it re-runs
-the 16-bit quant reference and the Welsh (cy) shift, writing to a temp dir, and checks the
-regenerated numbers against the committed JSONs within EPS_BPB. It does NOT need the model
-to be pre-downloaded (it will fetch Pythia-410m + the corpus you point --data-root at).
+the 16-bit quant reference and the ID-corpus shift cell, writing to a temp dir, and checks
+the regenerated numbers against the committed JSONs within EPS_BPB. It will download the
+Pythia-410m weights from HF if not cached, but it does NOT fetch any corpus: the WikiText-103
+test corpus must already be present at <root>/wikitext103_raw/test.txt, where <root> is
+--data-root if given, else $DATA_ROOT, else the runner default (/vault/datasets/text). Use
+the fetch/ scripts to obtain it first (see README.md / MANIFEST.md).
 
 Exit status 0 = all checks pass; non-zero = a deviation exceeded tolerance.
 """
@@ -189,8 +192,21 @@ def smoke(args):
     runner = HERE / "y1_pretrained_por.py"
     common = ["--model", args.model, "--ctx", "512", "--eval-bytes", "2000000",
               "--refit-bytes", "8000000", "--refit-tok", "400000"]
+    # --data-root is honored consistently with the runner: it sets DATA_ROOT for the
+    # re-run subprocess (which rebases the runner's TEXT dict). If not given, the
+    # subprocess inherits whatever DATA_ROOT is already in the environment, else the
+    # runner default (/vault/datasets/text). The required corpus is NOT fetched here.
+    env = dict(os.environ)
     if args.data_root:
-        os.environ["DATA_ROOT"] = args.data_root
+        env["DATA_ROOT"] = args.data_root
+    root = env.get("DATA_ROOT", "/vault/datasets/text")
+    idcorpus = Path(root) / "wikitext103_raw" / "test.txt"
+    print(f"[smoke] corpus root = {root}  (ID corpus: {idcorpus})", flush=True)
+    if not idcorpus.exists():
+        print(f"[smoke] ERROR: required corpus not found at {idcorpus}.\n"
+              f"        --smoke does not fetch; run fetch/fetch_wikitext103.py "
+              f"(see README.md) and/or pass --data-root.", flush=True)
+        return [f"smoke: missing corpus {idcorpus}"]
     fails = []
     with tempfile.TemporaryDirectory() as td:
         cells = [
@@ -203,7 +219,7 @@ def smoke(args):
             out = Path(td) / committed
             cmd = [sys.executable, str(runner)] + common + extra + ["--out", str(out)]
             print(f"\n[smoke] running: {' '.join(cmd)}", flush=True)
-            subprocess.run(cmd, check=True)
+            subprocess.run(cmd, check=True, env=env)
             got = json.loads(out.read_text()); want = load(committed)
             for k in keys:
                 d = abs(got[k] - want[k])
