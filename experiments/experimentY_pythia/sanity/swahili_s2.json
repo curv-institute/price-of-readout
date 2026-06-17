@@ -1,0 +1,13 @@
+{
+  "mode": "shift",
+  "split": "sw",
+  "frozen": 2.3404832894504617,
+  "refit": 2.1009886783292715,
+  "refit_source": {
+    "textfile": "/vault/datasets/text/ood_sw_wikipedia/data.txt",
+    "offset": 2000000,
+    "bytes": 8000000,
+    "seed": 2
+  },
+  "wall_s": 34.75678753852844
+}

@@ -93,13 +93,13 @@ def eval_bpb(model, ids, bytelen, ctx, dev, max_windows=400):
     return tot_bits / tot_bytes
 
 
-def head_refit(model, ids, ctx, dev, budget_tok, lr=1e-4):
+def head_refit(model, ids, ctx, dev, budget_tok, lr=1e-4, seed=0):
     head_names = ("embed_out", "lm_head", "final_layer_norm", "ln_f")
     for n, p in model.named_parameters():
         p.requires_grad_(any(h in n for h in head_names))
     ps = [p for p in model.parameters() if p.requires_grad]
     opt = torch.optim.AdamW(ps, lr=lr)
-    rng = np.random.default_rng(0); ms = len(ids) - (ctx + 1); seen = 0
+    rng = np.random.default_rng(seed); ms = len(ids) - (ctx + 1); seen = 0
     model.train()
     while seen < budget_tok:
         st = rng.integers(0, ms, 8); batch = np.stack([ids[s:s + ctx + 1] for s in st])
@@ -130,6 +130,8 @@ def main():
                     help="byte offset into the refit corpus (for an eval-disjoint refit)")
     ap.add_argument("--refit-textfile", default=None,
                     help="refit corpus path override (e.g. wikitext train, disjoint from the test-split eval)")
+    ap.add_argument("--refit-seed", type=int, default=0,
+                    help="RNG seed for refit-window sampling (default 0 reproduces the main run)")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
     dev = torch.device("cuda")
@@ -143,7 +145,7 @@ def main():
         m = fresh(args.model, dev); quant_body_(m, args.bits)
         frozen = eval_bpb(m, ids, bl, args.ctx, dev)
         m2 = fresh(args.model, dev); quant_body_(m2, args.bits)
-        head_refit(m2, tr, args.ctx, dev, args.refit_tok)
+        head_refit(m2, tr, args.ctx, dev, args.refit_tok, seed=args.refit_seed)
         refit = eval_bpb(m2, ids, bl, args.ctx, dev)
         res = {"mode": "quant", "bits": args.bits, "frozen_id": frozen, "refit_id": refit}
     else:
@@ -154,11 +156,11 @@ def main():
         m = fresh(args.model, dev)
         frozen = eval_bpb(m, ids, bl, args.ctx, dev)
         m2 = fresh(args.model, dev)
-        head_refit(m2, tr, args.ctx, dev, args.refit_tok)
+        head_refit(m2, tr, args.ctx, dev, args.refit_tok, seed=args.refit_seed)
         refit = eval_bpb(m2, ids, bl, args.ctx, dev)
         res = {"mode": "shift", "split": args.split, "frozen": frozen, "refit": refit}
     res["refit_source"] = {"textfile": refit_path, "offset": args.refit_offset,
-                           "bytes": args.refit_bytes}
+                           "bytes": args.refit_bytes, "seed": args.refit_seed}
     res["wall_s"] = time.time() - t0
     Path(args.out).parent.mkdir(parents=True, exist_ok=True); Path(args.out).write_text(json.dumps(res, indent=2))
     print("Y1_OK " + json.dumps(res))

@@ -4268,6 +4268,11 @@ average; because the refit uses \texttt{bfloat16} autocast, end-to-end
 regeneration reproduces to $2$--$3$ decimals across hardware/library
 versions (documented tolerance $|\Delta\,\text{bits/byte}| \le 0.01$
 per cell in the reproduction record~\cite{porepro}), not bit-exactly.
+Re-running the three far-OOD points (Yoruba, Swahili, Welsh, which carry
+the recovery signal) over three refit seeds gives a per-point recovery
+standard deviation $\le 0.003$ bits/byte (range $\le 0.008$), so the
+single-run recoveries are representative and the interface-borne signal
+is well outside refit-seed noise.
 
 \paragraph{Weight quantization.} The quantization decomposition applies
 per-output-channel symmetric round-to-nearest fake quantization to the
